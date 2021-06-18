@@ -118,8 +118,10 @@ summary(bankn$deposit)
 ```{r}
 summary(bankn$balance, maxsum = 10)
 ```
+
 - Std. Deviation
-`r sd(bankn$balance)`
+`r #sd(bankn$balance)`
+
 - The balance field contains 4 rows with characters instead of numeric 
   at row 8, 54, 26 and 87. Which causes the field to be interpreted as a factor field.
 `r bankn$balance[c(8, 54, 26, 87)]`
