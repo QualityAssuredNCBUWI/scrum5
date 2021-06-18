@@ -105,6 +105,7 @@ believe may represent and unknown value.
 ```{r}
 summary(bankn$housing)
 ```
+- The housing data is categorical, so no standard values were obtained from it, it simply gave a count of yes or no. There were also no outlier or missing values.
 
 ## Summary of Data Cont'd
 
@@ -126,6 +127,7 @@ summary(bankn$contact)
 ```{r}
 summary(bankn$day)
 ```
+- The standard values obtained from the date were not exactly meaningful, as they do represent ordinal values for the days in a month. However when day was analyzed with the month and potential year of the data set, it was observed that there may be outlier for the month of February where the day was 29. This is possible if the year of the data set was 2019, since that was not a leap year. A definite outlier would have been where the day was 30 for the month of February. 
 
 ### Month
 ```{r} 
@@ -153,7 +155,9 @@ summary(bankn$deposit)
 ```{r}
 summary(bankn$balance, maxsum = 10)
 ```
+
 - Std. Deviation won't work because of characters. Thats why the data type is factor and not numeric
+
 `r #sd(bankn$balance)`
 - The balance field contains 4 rows with characters instead of numeric 
   at row 8, 54, 26 and 87. Which causes the field to be interpreted as a factor field.
