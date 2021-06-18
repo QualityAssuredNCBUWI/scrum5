@@ -43,6 +43,8 @@ summary(bankn$RefNum)
 ```{r}
 summary(bankn$age)
 ```
+- Std. Deviation
+`r sd(bankn$age)`
 
 ## Summary of Data Cont'd
 
@@ -82,13 +84,13 @@ summary(bankn$loan)
 summary(bankn$contact)
 ```
 
+
 ## Summary of Data Cont'd
 
 ### Day
 ```{r}
 summary(bankn$day)
 ```
-
 
 ### Month
 ```{r} 
@@ -116,6 +118,8 @@ summary(bankn$deposit)
 ```{r}
 summary(bankn$balance, maxsum = 10)
 ```
+- Std. Deviation
+`r sd(bankn$balance)`
 - The balance field contains 4 rows with characters instead of numeric 
   at row 8, 54, 26 and 87. Which causes the field to be interpreted as a factor field.
 `r bankn$balance[c(8, 54, 26, 87)]`
