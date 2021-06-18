@@ -76,14 +76,18 @@ summary(bankn$housing)
 ### Loan
 ```{r}
 summary(bankn$loan)
+levels(bankn$loan)
 ```
-
+- The loan data is representing a boolean if the user has a loan or not
+- It is represented as categorical variable with values "yes" or "no"
+- There are 15 missing values that are read as a blank field in the dataframe.
+- This data column has good data as 1103 of the field data value is filled
 
 ### Contact
 ```{r}
 summary(bankn$contact)
 ```
-
+- The contact column is empty and has no value. It cannot be used in analysis.
 
 ## Summary of Data Cont'd
 
@@ -118,9 +122,8 @@ summary(bankn$deposit)
 ```{r}
 summary(bankn$balance, maxsum = 10)
 ```
-
 - Std. Deviation
-`r #sd(bankn$balance)`
+`r sd(bankn$balance)`
 
 - The balance field contains 4 rows with characters instead of numeric 
   at row 8, 54, 26 and 87. Which causes the field to be interpreted as a factor field.
