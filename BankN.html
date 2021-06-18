@@ -232,6 +232,10 @@ slide:not(.current) .plotly.html-widget{
 <pre >##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA&#39;s 
 ##   23.00   35.00   42.00   42.45   50.00   61.00       4</pre>
 
+<ul>
+<li>Std. Deviation NA</li>
+</ul>
+
 </article></slide><slide class=""><hgroup><h2>Summary of Data Cont’d</h2></hgroup><article  id="summary-of-data-contd">
 
 <h3>Job</h3>
@@ -311,6 +315,10 @@ slide:not(.current) .plotly.html-widget{
 <pre >##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
 ##     2.0   130.0   203.0   270.2   315.8  2177.0</pre>
 
+<ul>
+<li>Std. Deviation 249.4353492</li>
+</ul>
+
 <h3>Deposit</h3>
 
 <pre class = 'prettyprint lang-r'>summary(bankn$deposit)</pre>
@@ -322,28 +330,15 @@ slide:not(.current) .plotly.html-widget{
 
 <h3>Balance</h3>
 
-<pre class = 'prettyprint lang-r'>summary(bankn$balance)</pre>
+<pre class = 'prettyprint lang-r'>summary(bankn$balance, maxsum = 10)</pre>
 
-<pre >##       0     180    1260   16020    3420     540     720    7560    8280   10080 
-##      97      10       6       6       6       6       6       6       6       5 
-##   10980   12780    1440   17640   25740   10440   10800   14760   14940   18900 
-##       5       5       5       5       5       4       4       4       4       4 
-##   19620   20700   25020   25200   26460    2880    3060    3600   37080   37980 
-##       4       4       4       4       4       4       4       4       4       4 
-##   41220   44100    4500   54180    6120    9000   11880   12960   13680   14040 
-##       4       4       4       4       4       4       3       3       3       3 
-##   14580   16200   16560   18000   18180  216900    2340   23580   24660   25920 
-##       3       3       3       3       3       3       3       3       3       3 
-##   26640    2700   28260   32940   34200   37620    3780    3960   39600   39780 
-##       3       3       3       3       3       3       3       3       3       3 
-##    4140   41400   43740   45180   47340   48600    5220   55440   55800    6660 
-##       3       3       3       3       3       3       3       3       3       3 
-##   67860    7020    7380    7920   80460   93060    9360    9720  -11880  -12420 
-##       3       3       3       3       3       3       3       3       2       2 
-##   -1260   -2700  -30780  -44280  -62820    -720    -900  100800   10260  103140 
-##       2       2       2       2       2       2       2       2       2       2 
-##   10620    1080  112860   11520  118800   12060  120780   12240  124740 (Other) 
-##       2       2       2       2       2       2       2       2       2     687</pre>
+<pre >##       0     180    1260   16020    3420     540     720    7560    8280 (Other) 
+##      97      10       6       6       6       6       6       6       6     969</pre>
+
+<ul>
+<li><p>Std. Deviation</p></li>
+<li><p>The balance field contains 4 rows with characters instead of numeric at row 8, 54, 26 and 87. Which causes the field to be interpreted as a factor field. kk, cc, bb, aa</p></li>
+</ul>
 
 <pre >## &#39;data.frame&#39;:    1118 obs. of  13 variables:
 ##  $ RefNum   : int  10023467 10023468 10023469 10023470 10023471 10023472 10023473 10023474 10023475 10023476 ...
