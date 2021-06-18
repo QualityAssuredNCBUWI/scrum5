@@ -13,7 +13,11 @@ output: ioslides_presentation
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 options(scipen = 9999)
+options(width = 60)
 knitr::opts_chunk$set(linewidth = 60)
+library(knitr)
+library(formatR)
+opts_chunk$set(tidy.opts=list(width.cutoff=40),tidy=TRUE)
 ```
 
 ## Question 1
@@ -34,37 +38,68 @@ bankn <- read.csv("2021-Set03-QualityAssured.csv",
 ## Summary of Data 
 
 ### RefNum
+- ***A unique identifier for each customer***
 ```{r}
 summary(bankn$RefNum)
 ```
+As seen above the values range from 10023467 to 10024584, which accurately
+reflects that there are 1118 records. These Reference numbers may be needed later on.
+There does not appear to be any outliers or missing values.
 
+## Summary of Data Cont'd
 
 ### Age
+- ***numeric age of the customer***
 ```{r}
 summary(bankn$age)
 ```
-- Std. Deviation
+- Std. Deviation (returns NA because of missing values)
+
 `r sd(bankn$age)`
+- There appears to be no unusual ages present, however, there are missing values. 
+We have chosen to replace them with the median age.
+
+## Fixing the missing values in age
+```{r}
+bankn$age[is.na(bankn$age)] <- median(bankn$age, na.rm = T)
+summary(bankn$age)
+```
+
 
 ## Summary of Data Cont'd
 
 ### Job
+- ***Type of Job ("admin", "unemployed", "management","housemaid", "entrepreneur", "student", "blue-collar", "selfemployed", "retired", "technician", "services")***
 ```{r}
 summary(bankn$job)
 ```
+- According to the data dictionary, there should be only 11 levels,
+but there is one extra level. A " " character. There are 5 records with the job.
+What may be done to correct it, is to match a possible job based on 
+their deposits and balance compared to persons with jobs that have similar deposits
+and balances.
+
+## Summary of Data Cont'd
 
 ### Maritial Status
+- ***Marital status ("married","divorced","single"; note: "divorced" means divorced or widowed)***
+
 ```{r}
 summary(bankn$marital)
 ```
+Nothing appears to be extraordinary in the marital status field.
 
 ## Summary of Data Cont'd
 
 ### Education 
+- ***("secondary","primary","tertiary")***
 ```{r}
 summary(bankn$education)
 ```
+For the education level, we have 94 empty values and 2 "?" characters that we
+believe may represent and unknown value.
 
+## Summary of Data Cont'd
 
 ### Housing
 ```{r}
@@ -118,17 +153,21 @@ summary(bankn$deposit)
 ```{r}
 summary(bankn$balance, maxsum = 10)
 ```
-- Std. Deviation
-`r sd(bankn$balance)`
+- Std. Deviation won't work because of characters. Thats why the data type is factor and not numeric
+`r #sd(bankn$balance)`
 - The balance field contains 4 rows with characters instead of numeric 
   at row 8, 54, 26 and 87. Which causes the field to be interpreted as a factor field.
-`r bankn$balance[c(8, 54, 26, 87)]`
+
+## Values  
+```{r echo=TRUE}
+bankn$balance[c(8, 54, 26, 87)]
+```
 
 
-
+## Structure of the data
 ```{r echo=FALSE}
 str(bankn)
-levels(bankn$job)
+#levels(bankn$job)
 ```
 
 
