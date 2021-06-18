@@ -11,9 +11,128 @@ output: ioslides_presentation
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(echo = TRUE)
 options(scipen = 9999)
+knitr::opts_chunk$set(linewidth = 60)
 ```
+
+## Question 1
+1. Load the dataset and explore the contents, summarizing your findings of the data quality in
+relation to standard measures (including, mean, median, standard deviation, missing values,
+outliers, etc.). Review the data dictionary attached to get the context of each measurement.
+
+    a.Describe the data in terms of the types and measurements and what each measurement
+represents (purpose of features, range of values, min, max, etc.)
+
+    b.Fix missing values, noise and outliers as necessary
+    
+```{r echo=FALSE}
+bankn <- read.csv("2021-Set03-QualityAssured.csv", 
+                  header = T, sep = ",", stringsAsFactors = T)
+```
+
+## Summary of Data 
+
+### RefNum
+```{r}
+summary(bankn$RefNum)
+```
+
+
+### Age
+```{r}
+summary(bankn$age)
+```
+
+## Summary of Data Cont'd
+
+### Job
+```{r}
+summary(bankn$job)
+```
+
+### Maritial Status
+```{r}
+summary(bankn$marital)
+```
+
+## Summary of Data Cont'd
+
+### Education 
+```{r}
+summary(bankn$education)
+```
+
+
+### Housing
+```{r}
+summary(bankn$housing)
+```
+
+## Summary of Data Cont'd
+
+### Loan
+```{r}
+summary(bankn$loan)
+```
+
+
+### Contact
+```{r}
+summary(bankn$contact)
+```
+
+## Summary of Data Cont'd
+
+### Day
+```{r}
+summary(bankn$day)
+```
+
+
+### Month
+```{r} 
+summary(bankn$month)
+```
+
+## Summary of Data Cont'd
+
+### Duration
+```{r}
+summary(bankn$duration)
+```
+- Std. Deviation
+`r sd(bankn$duration)`
+
+
+### Deposit
+```{r}
+summary(bankn$deposit)
+```
+
+## Summary of Data Cont'd
+
+### Balance
+```{r}
+summary(bankn$balance, maxsum = 10)
+```
+- The balance field contains 4 rows with characters instead of numeric 
+  at row 8, 54, 26 and 87. Which causes the field to be interpreted as a factor field.
+`r bankn$balance[c(8, 54, 26, 87)]`
+
+
+
+```{r echo=FALSE}
+str(bankn)
+levels(bankn$job)
+```
+
+
+
+
+
+
+
 
 
 
