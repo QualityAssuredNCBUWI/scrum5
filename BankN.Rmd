@@ -7,7 +7,10 @@ author:
   - Phillip Llewelyn
   - Tai-vaughn White
 date: "6/18/2021"
-output: ioslides_presentation
+output:
+  ioslides_presentation:
+    logo: QualityAssuredlogo.jpeg
+autosize: true
 ---
 
 ```{r setup, include=FALSE}
@@ -17,7 +20,15 @@ options(width = 60)
 knitr::opts_chunk$set(linewidth = 60)
 library(knitr)
 library(formatR)
+library(ggplot2)
 opts_chunk$set(tidy.opts=list(width.cutoff=40),tidy=TRUE)
+mode <- function(v, empty = FALSE) {
+  if(empty){
+    v = v[v != ""]
+  }
+  uniqv <- unique(v)
+  uniqv[which.max(tabulate(match(v, uniqv)))]
+}
 ```
 
 ## Question 1
@@ -69,15 +80,16 @@ summary(bankn$age)
 ## Summary of Data Cont'd
 
 ### Job
-- ***Type of Job ("admin", "unemployed", "management","housemaid", "entrepreneur", "student", "blue-collar", "selfemployed", "retired", "technician", "services")***
+- <font size="3">***Type of Job ("admin", "unemployed", "management","housemaid", "entrepreneur", "student", "blue-collar","self-employed", "retired", "technician", "services")***</font>
+
 ```{r}
 summary(bankn$job)
 ```
-- According to the data dictionary, there should be only 11 levels,
+- <font size="3">According to the data dictionary, there should be only 11 levels,
 but there is one extra level. A " " character. There are 5 records with the job.
 What may be done to correct it, is to match a possible job based on 
 their deposits and balance compared to persons with jobs that have similar deposits
-and balances.
+and balances.</font>
 
 ## Summary of Data Cont'd
 
@@ -97,7 +109,49 @@ Nothing appears to be extraordinary in the marital status field.
 summary(bankn$education)
 ```
 For the education level, we have 94 empty values and 2 "?" characters that we
-believe may represent and unknown value.
+believe may represent and unknown value. To replace these values, we have 
+decided it best to replace the missing values based on job. Certain types 
+of jobs dominate certain education levels as seen here:.
+
+## Education Distribution by Job
+
+```{r, fig.cap="Fig.3 Primary education dist. by Jobs"}
+ggplot(bankn[bankn$education == "tertiary",c(3,5)], aes(x="", y=job, fill=job)) +
+  geom_bar(stat="identity", width=1) +
+  coord_polar("y", start=0) +labs( title="Fig.1 Tertiary education dist. by Jobs")+ theme_void()
+```
+
+## Education Distribution by Job cont'd
+
+```{r, fig.cap="Fig.3 Primary education dist. by Jobs"}
+ggplot(bankn[bankn$education == "secondary",c(3,5)], aes(x="", y=job, fill=job)) +
+  geom_bar(stat="identity", width=1) +
+  coord_polar("y", start=0) +labs( title="Fig.2 Secondary education dist. by Jobs")+ theme_void()
+```
+
+## Education Distribution by Job cont'd
+
+```{r, fig.cap="Fig.3 Primary education dist. by Jobs"}
+ggplot(bankn[bankn$education == "primary",c(3,5)], aes(x="", y=job, fill=job)) +
+  geom_bar(stat="identity", width=1) +
+  coord_polar("y", start=0) +labs( title="Fig.3 Primary education dist. by Jobs")+ theme_void()
+      
+```
+
+## Analysis
+With this information we can assign the most popular job, to match
+each education level
+
+```{r}
+bankn$education[bankn$job == mode(bankn[bankn$education == "tertiary","job"]) 
+                & bankn$education == ""] <- "tertiary"
+bankn$education[bankn$job == mode(bankn[bankn$education == "secondary","job"]) 
+                & bankn$education == ""] <- "secondary"
+bankn$education[bankn$job == mode(bankn[bankn$education == "primary","job"]) 
+                & bankn$education == ""] <- "primary"
+summary(bankn$education)
+```
+
 
 ## Summary of Data Cont'd
 
@@ -112,14 +166,18 @@ summary(bankn$housing)
 ### Loan
 ```{r}
 summary(bankn$loan)
+levels(bankn$loan)
 ```
-
+- The loan data is representing a boolean if the user has a loan or not
+- It is represented as categorical variable with values "yes" or "no"
+- There are 15 missing values that are read as a blank field in the dataframe.
+- This data column has good data as 1103 of the field data value is filled
 
 ### Contact
 ```{r}
 summary(bankn$contact)
 ```
-
+- The contact column is empty and has no value. It cannot be used in analysis.
 
 ## Summary of Data Cont'd
 
