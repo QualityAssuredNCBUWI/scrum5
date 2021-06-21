@@ -16,7 +16,7 @@ autosize: true
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 options(scipen = 9999)
-options(width = 60)
+options(width = 70)
 knitr::opts_chunk$set(linewidth = 60)
 library(knitr)
 library(formatR)
@@ -88,6 +88,55 @@ Nothing appears to be extraordinary in the marital status field.
 
 ## Summary of Data Cont'd
 
+### Job
+- <font size="3">***Type of Job ("admin.", "unemployed", "management","housemaid", "entrepreneur", "student", "blue-collar","self-employed", "retired", "technician", "services")***</font>
+
+```{r}
+summary(bankn$job)
+```
+- <font size="3">According to the data dictionary, there should be only 11 levels,
+but there is one extra level. A " " character. There are 5 records with the job.
+
+- After considering whether the values could be corrected. 4 of the 5 records also had no education level attached, which was the metric to be used to fill the missing education values.
+</font>
+
+## Job's Missing Values
+```{r}
+bankn[!(bankn$job %in% c("admin.", "unemployed", "management","housemaid", "entrepreneur", "student", "blue-collar","self-employed", "retired", "technician", "services")),2:5]
+```
+<font size="3">
+- Thus, It was determined that no other metric was reliable. The record containing the education level was filled with the most prevalent job and the other 4 removed from the data set.
+
+</font>
+
+## Code to remove values
+
+```{r}
+bankn <- bankn[(bankn$job %in% c("admin.", "unemployed", "management","housemaid", "entrepreneur", "student", "blue-collar","self-employed", "retired", "technician", "services")) | (bankn$education %in% 
+                    c('tertiary','secondary','primary')),]
+summary(bankn$job)
+```
+
+## Record with Educational Level but Missing Job (Before)
+```{r}
+before <- bankn[!(bankn$job %in% c("admin.", "unemployed", "management","housemaid", "entrepreneur", "student", "blue-collar","self-employed", "retired", "technician", "services")),]
+before
+refnum <- before$RefNum
+```
+
+## Correcting the Missing Job with an Education Value
+
+```{r}
+bankn[!(bankn$job %in% c("admin.", "unemployed", "management","housemaid", "entrepreneur", "student", "blue-collar","self-employed", "retired", "technician", "services")),"job"] <- mode(bankn$job[bankn$education == "primary"])
+```
+
+## Record with Educational Level but Missing Job (After)
+```{r}
+bankn[bankn$RefNum == refnum,]
+```
+
+## Summary of Data Cont'd
+
 ### Education 
 - ***("secondary","primary","tertiary")***
 ```{r}
@@ -144,6 +193,22 @@ geteducation <- function(jobs){
   }
   return(lis)
 }
+
+getEducationRatio <- function(jobs){
+    lis <- list()
+    df <- data.frame()
+    for (job in jobs) {
+      tert <- length(bankn$education[bankn$education == "tertiary" & bankn$job == job])
+      sec <- length(bankn$education[bankn$education == "secondary" & bankn$job == job])
+      prim <- length(bankn$education[bankn$education == "primary" & bankn$job == job])
+      len = nrow(bankn[bankn$job == job,])
+      tertiary = round((tert/len)*100, digits = 2)
+      secondary = round((sec/len)*100, digits = 2)
+      primary = round((prim/len)*100, digits =2)
+      lis <- append(lis, data.frame(c(tertiary,secondary,primary)))
+    }
+    return(do.call(rbind, lis))
+}
 ```
 
 ## Applying the function to Fix Errors/Unknown
@@ -155,23 +220,29 @@ missingEducation <- bankn[!(bankn$education %in%
                   c('job','education')]
 
 bankn$education[!(bankn$education %in% 
-                    c('tertiary','secondary','primary'))] <- geteducation(missingEducation$job)
+                    c('tertiary','secondary','primary'))] <- geteducation(
+                      missingEducation$job)
 summary(bankn$education)
 ```
 
-## Summary of Data Cont'd
+## Justifying Using the Most Prevalent Job
 
-### Job
-- <font size="3">***Type of Job ("admin", "unemployed", "management","housemaid", "entrepreneur", "student", "blue-collar","self-employed", "retired", "technician", "services")***</font>
+We can see by using ratios that most jobs are disproportionately associated with certain
+education levels
 
+## Code for Values
 ```{r}
-summary(bankn$job)
+jobs <- getEducationRatio(c("admin.", "unemployed", "management","housemaid", "entrepreneur", "student", "blue-collar","self-employed", "retired", "technician", "services"))
+colnames(jobs) <- c("tertiary","secondary","primary")
+rownames(jobs) <- c("admin.", "unemployed", "management","housemaid", "entrepreneur", "student", "blue-collar","self-employed", "retired", "technician", "services")
 ```
-- <font size="3">According to the data dictionary, there should be only 11 levels,
-but there is one extra level. A " " character. There are 5 records with the job.
-What may be done to correct it, is to match a possible job based on 
-their deposits and balance compared to persons with jobs that have similar deposits
-and balances.</font>
+
+## Values
+```{r}
+jobs
+```
+
+
 
 
 ## Summary of Data Cont'd
