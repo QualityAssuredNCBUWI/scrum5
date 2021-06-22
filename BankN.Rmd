@@ -10,6 +10,8 @@ date: "6/18/2021"
 output:
   ioslides_presentation:
     logo: QualityAssuredlogo.jpeg
+    widescreen: true
+    smaller: true
 autosize: true
 ---
 
@@ -46,9 +48,9 @@ bankn <- read.csv("2021-Set03-QualityAssured.csv",
                   header = T, sep = ",", stringsAsFactors = T)
 ```
 
-## Summary of Data 
+# Summary of Data 
 
-### RefNum
+## Summary of Data | RefNum
 - ***A unique identifier for each customer***
 ```{r}
 summary(bankn$RefNum)
@@ -57,9 +59,8 @@ As seen above the values range from 10023467 to 10024584, which accurately
 reflects that there are 1118 records. These Reference numbers may be needed later on.
 There does not appear to be any outliers or missing values.
 
-## Summary of Data Cont'd
+## Summary of Data | Age
 
-### Age
 - ***numeric age of the customer***
 ```{r}
 summary(bankn$age)
@@ -76,9 +77,8 @@ bankn$age[is.na(bankn$age)] <- median(bankn$age, na.rm = T)
 summary(bankn$age)
 ```
 
-## Summary of Data Cont'd
+## Summary of Data | Marital Status
 
-### Maritial Status
 - ***Marital status ("married","divorced","single"; note: "divorced" means divorced or widowed)***
 
 ```{r}
@@ -86,28 +86,25 @@ summary(bankn$marital)
 ```
 Nothing appears to be extraordinary in the marital status field.
 
-## Summary of Data Cont'd
+## Summary of Data | Job
 
-### Job
-- <font size="3">***Type of Job ("admin.", "unemployed", "management","housemaid", "entrepreneur", "student", "blue-collar","self-employed", "retired", "technician", "services")***</font>
+***Types of Job ("admin.", "unemployed", "management","housemaid", "entrepreneur", "student", "blue-collar","self-employed", "retired", "technician", "services")***
 
 ```{r}
 summary(bankn$job)
 ```
-- <font size="3">According to the data dictionary, there should be only 11 levels,
+- According to the data dictionary, there should be only 11 levels,
 but there is one extra level. A " " character. There are 5 records with the job.
 
+----
+
 - After considering whether the values could be corrected. 4 of the 5 records also had no education level attached, which was the metric to be used to fill the missing education values.
-</font>
 
 ## Job's Missing Values
 ```{r}
 bankn[!(bankn$job %in% c("admin.", "unemployed", "management","housemaid", "entrepreneur", "student", "blue-collar","self-employed", "retired", "technician", "services")),2:5]
 ```
-<font size="3">
 - Thus, It was determined that no other metric was reliable. The record containing the education level was filled with the most prevalent job and the other 4 removed from the data set.
-
-</font>
 
 ## Code to remove values
 
@@ -135,9 +132,8 @@ bankn[!(bankn$job %in% c("admin.", "unemployed", "management","housemaid", "entr
 bankn[bankn$RefNum == refnum,]
 ```
 
-## Summary of Data Cont'd
+## Summary of Data | Education
 
-### Education 
 - ***("secondary","primary","tertiary")***
 ```{r}
 summary(bankn$education)
@@ -147,36 +143,34 @@ believe may represent an unknown value. To replace these values, we have
 decided it best to replace the missing values based on job. Certain types 
 of jobs dominate certain education levels as seen here:.
 
-## Education Distribution by Job
+# Education Distribution by Job
 
-```{r, fig.cap="Fig.3 Primary education dist. by Jobs"}
+----
+
+```{r, fig.cap="Fig.3 Primary education dist. by Jobs", fig.align = 'center'}
 ggplot(bankn[bankn$education == "tertiary",c(3,5)], aes(x="", y=job, fill=job)) +
-  geom_bar(stat="identity", width=1) +
-  coord_polar("y", start=0) +labs( title="Fig.1 Tertiary education dist. by Jobs")+ theme_void()
+  geom_bar(stat="identity", width=1) +coord_polar("y", start=0) +theme_void()
 ```
 
-## Education Distribution by Job cont'd
+----
 
-```{r, fig.cap="Fig.3 Primary education dist. by Jobs"}
-ggplot(bankn[bankn$education == "secondary",c(3,5)], aes(x="", y=job, fill=job)) +
-  geom_bar(stat="identity", width=1) +
-  coord_polar("y", start=0) +labs( title="Fig.2 Secondary education dist. by Jobs")+ theme_void()
+```{r, fig.cap="Fig.3 Primary education dist. by Jobs", fig.align = 'center'}
+ggplot(bankn[bankn$education=="secondary",c(3,5)], aes(x="", y=job, fill=job)) +
+  geom_bar(stat="identity", width=1) +coord_polar("y", start=0) + theme_void()
 ```
 
-## Education Distribution by Job cont'd
+----
 
-```{r, fig.cap="Fig.3 Primary education dist. by Jobs"}
+```{r, fig.cap="Fig.3 Primary education dist. by Jobs", fig.align = 'center'}
 ggplot(bankn[bankn$education == "primary",c(3,5)], aes(x="", y=job, fill=job)) +
-  geom_bar(stat="identity", width=1) +
-  coord_polar("y", start=0) +labs( title="Fig.3 Primary education dist. by Jobs")+ theme_void()
-      
+  geom_bar(stat="identity", width=1) +coord_polar("y", start=0) + theme_void()
 ```
 
 ## Analysis
 With this information we can assign an education level to match the prevalence 
 of that job at that level.
 
-## Helping Function
+## Helping Functions | geteducation
 - This function allows us to get the most prevalent education level for a job
 
 ```{r}
@@ -193,7 +187,13 @@ geteducation <- function(jobs){
   }
   return(lis)
 }
+```
 
+## Helping Function | getEducationRatio
+- This function allows us to get the percentiles for distribution of jobs by
+education levels.
+
+```{r}
 getEducationRatio <- function(jobs){
     lis <- list()
     df <- data.frame()
@@ -211,7 +211,7 @@ getEducationRatio <- function(jobs){
 }
 ```
 
-## Applying the function to Fix Errors/Unknown
+## Fixing Errors/Unknown Values
 
 
 ```{r}
@@ -237,12 +237,10 @@ colnames(jobs) <- c("tertiary","secondary","primary")
 rownames(jobs) <- c("admin.", "unemployed", "management","housemaid", "entrepreneur", "student", "blue-collar","self-employed", "retired", "technician", "services")
 ```
 
-## Values
+## Jobs with Educational Level
 ```{r}
 jobs
 ```
-
-
 
 
 ## Summary of Data Cont'd
