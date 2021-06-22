@@ -285,6 +285,13 @@ bankn[bankn$loan == "", "loan"] <- "no"
 summary(bankn$contact)
 ```
 - The contact column is empty and has no value. It cannot be used in analysis.
+- The column would be removed as it would not be used.
+
+- contacts column removal
+```{r}
+bankn$contact <- NULL
+```
+
 
 ## Summary of Data Cont'd
 
