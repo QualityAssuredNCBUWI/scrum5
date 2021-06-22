@@ -7,13 +7,30 @@ author:
   - Phillip Llewelyn
   - Tai-vaughn White
 date: "6/18/2021"
-output: ioslides_presentation
+output:
+  ioslides_presentation:
+    logo: QualityAssuredlogo.jpeg
+    widescreen: true
+    smaller: true
+autosize: true
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 options(scipen = 9999)
+options(width = 70)
 knitr::opts_chunk$set(linewidth = 60)
+library(knitr)
+library(formatR)
+library(ggplot2)
+opts_chunk$set(tidy.opts=list(width.cutoff=40),tidy=TRUE)
+mode <- function(v, empty = FALSE) {
+  if(empty){
+    v = v[v != ""]
+  }
+  uniqv <- unique(v)
+  uniqv[which.max(tabulate(match(v, uniqv)))]
+}
 ```
 
 ## Question 1
@@ -31,40 +48,202 @@ bankn <- read.csv("2021-Set03-QualityAssured.csv",
                   header = T, sep = ",", stringsAsFactors = T)
 ```
 
-## Summary of Data 
+# Summary of Data 
 
-### RefNum
+## Summary of Data | RefNum
+- ***A unique identifier for each customer***
 ```{r}
 summary(bankn$RefNum)
 ```
+As seen above the values range from 10023467 to 10024584, which accurately
+reflects that there are 1118 records. These Reference numbers may be needed later on.
+There does not appear to be any outliers or missing values.
 
+## Summary of Data | Age
 
-### Age
+- ***numeric age of the customer***
 ```{r}
 summary(bankn$age)
 ```
-- Std. Deviation
+- Std. Deviation (returns NA because of missing values)
+
 `r sd(bankn$age)`
+- There appears to be no unusual ages present, however, there are missing values. 
+We have chosen to replace them with the median age.
 
-## Summary of Data Cont'd
-
-### Job
+## Fixing the missing values in age
 ```{r}
-summary(bankn$job)
+bankn$age[is.na(bankn$age)] <- median(bankn$age, na.rm = T)
+summary(bankn$age)
 ```
 
-### Maritial Status
+## Summary of Data | Marital Status
+
+- ***Marital status ("married","divorced","single"; note: "divorced" means divorced or widowed)***
+
 ```{r}
 summary(bankn$marital)
 ```
+Nothing appears to be extraordinary in the marital status field.
 
-## Summary of Data Cont'd
+## Summary of Data | Job
 
-### Education 
+***Types of Job ("admin.", "unemployed", "management","housemaid", "entrepreneur", "student", "blue-collar","self-employed", "retired", "technician", "services")***
+
+```{r}
+summary(bankn$job)
+```
+- According to the data dictionary, there should be only 11 levels,
+but there is one extra level. A " " character. There are 5 records with the job.
+
+----
+
+- After considering whether the values could be corrected. 4 of the 5 records also had no education level attached, which was the metric to be used to fill the missing education values.
+
+## Job's Missing Values
+```{r}
+bankn[!(bankn$job %in% c("admin.", "unemployed", "management","housemaid", "entrepreneur", "student", "blue-collar","self-employed", "retired", "technician", "services")),2:5]
+```
+- Thus, It was determined that no other metric was reliable. The record containing the education level was filled with the most prevalent job and the other 4 removed from the data set.
+
+## Code to remove values
+
+```{r}
+bankn <- bankn[(bankn$job %in% c("admin.", "unemployed", "management","housemaid", "entrepreneur", "student", "blue-collar","self-employed", "retired", "technician", "services")) | (bankn$education %in% 
+                    c('tertiary','secondary','primary')),]
+summary(bankn$job)
+```
+
+## Record with Educational Level but Missing Job (Before)
+```{r}
+before <- bankn[!(bankn$job %in% c("admin.", "unemployed", "management","housemaid", "entrepreneur", "student", "blue-collar","self-employed", "retired", "technician", "services")),]
+before
+refnum <- before$RefNum
+```
+
+## Correcting the Missing Job with an Education Value
+
+```{r}
+bankn[!(bankn$job %in% c("admin.", "unemployed", "management","housemaid", "entrepreneur", "student", "blue-collar","self-employed", "retired", "technician", "services")),"job"] <- mode(bankn$job[bankn$education == "primary"])
+```
+
+## Record with Educational Level but Missing Job (After)
+```{r}
+bankn[bankn$RefNum == refnum,]
+```
+
+## Summary of Data | Education
+
+- ***("secondary","primary","tertiary")***
 ```{r}
 summary(bankn$education)
 ```
+For the education level, we have 94 empty values and 2 "?" characters that we
+believe may represent an unknown value. To replace these values, we have 
+decided it best to replace the missing values based on job. Certain types 
+of jobs dominate certain education levels as seen here:.
 
+# Education Distribution by Job
+
+----
+
+```{r, fig.cap="Fig.3 Primary education dist. by Jobs", fig.align = 'center'}
+ggplot(bankn[bankn$education == "tertiary",c(3,5)], aes(x="", y=job, fill=job)) +
+  geom_bar(stat="identity", width=1) +coord_polar("y", start=0) +theme_void()
+```
+
+----
+
+```{r, fig.cap="Fig.3 Primary education dist. by Jobs", fig.align = 'center'}
+ggplot(bankn[bankn$education=="secondary",c(3,5)], aes(x="", y=job, fill=job)) +
+  geom_bar(stat="identity", width=1) +coord_polar("y", start=0) + theme_void()
+```
+
+----
+
+```{r, fig.cap="Fig.3 Primary education dist. by Jobs", fig.align = 'center'}
+ggplot(bankn[bankn$education == "primary",c(3,5)], aes(x="", y=job, fill=job)) +
+  geom_bar(stat="identity", width=1) +coord_polar("y", start=0) + theme_void()
+```
+
+## Analysis
+With this information we can assign an education level to match the prevalence 
+of that job at that level.
+
+## Helping Functions | geteducation
+- This function allows us to get the most prevalent education level for a job
+
+```{r}
+geteducation <- function(jobs){
+  lis <- vector()
+  for (job in jobs) {
+    tert <- length(bankn$education[bankn$education == "tertiary" & bankn$job == job])
+    sec <- length(bankn$education[bankn$education == "secondary" & bankn$job == job])
+    prim <- length(bankn$education[bankn$education == "primary" & bankn$job == job])
+    len = nrow(bankn[bankn$job == job,])
+    lis <- append(lis, ifelse(tert > sec & tert > prim, "tertiary", ifelse(sec > tert & sec > prim,
+           "secondary", ifelse(prim > tert & prim > sec,
+           "primary", '?'))))
+  }
+  return(lis)
+}
+```
+
+## Helping Function | getEducationRatio
+- This function allows us to get the percentiles for distribution of jobs by
+education levels.
+
+```{r}
+getEducationRatio <- function(jobs){
+    lis <- list()
+    df <- data.frame()
+    for (job in jobs) {
+      tert <- length(bankn$education[bankn$education == "tertiary" & bankn$job == job])
+      sec <- length(bankn$education[bankn$education == "secondary" & bankn$job == job])
+      prim <- length(bankn$education[bankn$education == "primary" & bankn$job == job])
+      len = nrow(bankn[bankn$job == job,])
+      tertiary = round((tert/len)*100, digits = 2)
+      secondary = round((sec/len)*100, digits = 2)
+      primary = round((prim/len)*100, digits =2)
+      lis <- append(lis, data.frame(c(tertiary,secondary,primary)))
+    }
+    return(do.call(rbind, lis))
+}
+```
+
+## Fixing Errors/Unknown Values
+
+
+```{r}
+missingEducation <- bankn[!(bankn$education %in% 
+                    c('tertiary','secondary','primary')),
+                  c('job','education')]
+
+bankn$education[!(bankn$education %in% 
+                    c('tertiary','secondary','primary'))] <- geteducation(
+                      missingEducation$job)
+summary(bankn$education)
+```
+
+## Justifying Using the Most Prevalent Job
+
+We can see by using ratios that most jobs are disproportionately associated with certain
+education levels
+
+## Code for Values
+```{r}
+jobs <- getEducationRatio(c("admin.", "unemployed", "management","housemaid", "entrepreneur", "student", "blue-collar","self-employed", "retired", "technician", "services"))
+colnames(jobs) <- c("tertiary","secondary","primary")
+rownames(jobs) <- c("admin.", "unemployed", "management","housemaid", "entrepreneur", "student", "blue-collar","self-employed", "retired", "technician", "services")
+```
+
+## Jobs with Educational Level
+```{r}
+jobs
+```
+
+
+## Summary of Data Cont'd
 
 ### Housing
 ```{r}
@@ -98,26 +277,72 @@ summary(bankn$day)
 ```
 - The standard values obtained from the date were not exactly meaningful, as they do represent ordinal values for the days in a month. However when day was analyzed with the month and potential year of the data set, it was observed that there may be outlier for the month of February where the day was 29. This is possible if the year of the data set was 2019, since that was not a leap year. A definite outlier would have been where the day was 30 for the month of February. 
 
-### Month
+## Summary of Data | Month
+
 ```{r} 
 summary(bankn$month)
 ```
+* Outlier : Since the data set is categorical in nature and using the summary of the month column we can conclude that there are no outliers for this data set None 
 
-## Summary of Data Cont'd
+* the month feature is used to describe the months of the year which the last deposite was made and as a result is a categorical data type
 
-### Duration
+* Value Range : The possible values that can be taken on by month ranges between "january" to "december"
+
+* Min : This is initially meaningless when used against categorical data but it when used with the summary function , which will returns total number of times the each category appears within the dataset min can be used to determine the lowest number of times a category appears 
+
+## Summary of Data | Month
+
+```{r}
+min(summary(bankn$month))
+```
+* Max : This is initially meaningless when used against categorical data but it when used with the summary function , which will returns total number of times the each category appears within the dataset, min can be used to determine the highest number of times a category appears
+
+```{r}
+max(summary(bankn$month))
+```
+missing values : 
+
+```{r}
+sum(is.na(bankn$month))
+```
+
+## Summary of Data | Duration
+
 ```{r}
 summary(bankn$duration)
 ```
 - Std. Deviation
 `r sd(bankn$duration)`
 
+Data Type: Since the Duration data type is a measure of the length of time spent on a call (seconds) then this factor does possess a true Zero placing it as a Ratio Data type 
 
-### Deposit
+Range of value: the values present range from 2 to 2177 (seconds)
+
+min: using the "min" function we can find the value with the shortest call duration 
+```{r}
+min(bankn$duration)
+```
+max: using the "max" function we can find the value with the longest call duration 
+```{r}
+max(bankn$duration)
+```
+missing values: From the summary of the vector we can see that there are no missing values present in the vector
+
+noise: When looking at the structure of the data set we see that the "duration" factor consists of purely integers
+
+outliers: With the use of a box plot we can see if any outliers exist
+```{r}
+boxplot(bankn$duration)
+```
+
+From the result of the box plot we can see there are many outliers but with the nature or the feature in question these outliers can be considered valid data as the length of time a person would be willing to stay on the phone may vary 
+
+## Summary of Data | Deposit
 ```{r}
 summary(bankn$deposit)
 ```
 
+<<<<<<< HEAD
 ## Summary of Data Cont'd
 The deposit feature stores the amount of money deposited by a customer during their last transaction.A box plot revealed that there are several outliers within this feature. The values are  majority numeric. The measurement type is ratio since there are absolute zeros present. There are also several missing values of type NA.
 
@@ -140,30 +365,99 @@ bankn[is.na(bankn$deposit),"deposit"] <- mean(bankn$deposit,na.rm=T)
 
 
 
+=======
+## Summary of Data | Balance
+>>>>>>> e26e1dd7db72dfb46fb8e56a6c51489ece37e1ef
 
-### Balance
 ```{r}
 summary(bankn$balance, maxsum = 10)
 ```
-- Std. Deviation
-`r sd(bankn$balance)`
 
+- Std. Deviation won't work because of characters. Thats why the data type is factor and not numeric
+
+`r #sd(bankn$balance)`
 - The balance field contains 4 rows with characters instead of numeric 
   at row 8, 54, 26 and 87. Which causes the field to be interpreted as a factor field.
-`r bankn$balance[c(8, 54, 26, 87)]`
 
-
-
-```{r echo=FALSE}
-str(bankn)
-levels(bankn$job)
+## Values  
+```{r echo=TRUE}
+bankn$balance[c(8, 54, 26, 87)]
 ```
 
 
+## Structure of the data
+```{r echo=FALSE}
+str(bankn)
+#levels(bankn$job)
+```
 
 
+# Question 2
+
+## Question 2 | Convert the duration from the current value in seconds to minutes.
+
+#### Before
+```{r}
+head(bankn$duration, n = 3)
+bankn$duration <- round(bankn$duration/60, digits = 2)
+```
+
+#### After
+```{r}
+head(bankn$duration, n = 3)
+```
+
+# Question 3
 
 
+## Question 3 | Apply one of the binning methods discussed to discretize age. Justify your selection and apply the changes to make age a categorical variable (factor in R).
+
+----
+
+```{r, fig.cap="Distribution of Ages", fig.align='center'}
+hist(bankn$age, col="lightgreen", col.lab="darkgrey",
+     col.axis="darkgrey", xlab = "Age", main="")
+```
+
+## Discretization Method | Generation Groups
+
+### Justification
+
+1. Ages do not contain outliers.
+
+2. We could have meaningful categories to represent different generations of bankers.
+
+3. Well-researched categories can provide meaningful insights into views on money.
+
+4. Standard Discretization methods would not offer as much insights as this method.
+
+## Categories Selected
+
+- Generation Z (1996 – 2015, age <=25)
+- Millennial (1977 – 1995, age 26 <=44)
+- Generation X (1965 – 1976, age 45 <= 56)
+- Baby Boomers (1946 – 1964, age 57 <= 75)
+
+
+```{r}
+age.max = max(bankn$age)
+age.min = min(bankn$age)
+new.max = age.max + 1
+age.temp <- cut(bankn$age, breaks = c(age.min, 25, 44, 56, age.max),
+                labels = c("Gen Z", "Millennials", "Gen X", "Baby Boomers"), right = TRUE)
+# data.frame(old = bankn$age, new = age.temp) 
+bankn$age <- age.temp
+```
+
+## Discretization | New Values
+
+```{r}
+head(bankn$age, n = 5)
+```
+
+# Question 4
+
+## Question 4 | Apply one of the normalization methods discussed to any feature in the dataset. Justify your decision.
 
 
 
