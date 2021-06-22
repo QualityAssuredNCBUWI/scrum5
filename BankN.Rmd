@@ -96,6 +96,27 @@ summary(bankn$day)
 ```{r} 
 summary(bankn$month)
 ```
+* Outlier : Since the data set is categorical in nature and using the summary of the month column we can conclude that there are no outliers for this data set None 
+
+* the month feature is used to describe the months of the year which the last deposite was made and as a result is a categorical data type
+
+* Value Range : The possible values that can be taken on by month ranges between "january" to "december"
+
+* Min : This is initially meaningless when used against categorical data but it when used with the summary function , which will returns total number of times the each category appears within the dataset min can be used to determine the lowest number of times a category appears 
+
+```{r}
+min(summary(bankn$month))
+```
+* Max : This is initially meaningless when used against categorical data but it when used with the summary function , which will returns total number of times the each category appears within the dataset, min can be used to determine the highest number of times a category appears
+
+```{r}
+max(summary(bankn$month))
+```
+missing values : 
+
+```{r}
+sum(is.na(bankn$month))
+```
 
 ## Summary of Data Cont'd
 
@@ -106,6 +127,28 @@ summary(bankn$duration)
 - Std. Deviation
 `r sd(bankn$duration)`
 
+Data Type: Since the Duration data type is a measure of the length of time spent on a call (seconds) then this factor does possess a true Zero placing it as a Ratio Data type 
+
+Range of value: the values present range from 2 to 2177 (seconds)
+
+min: using the "min" function we can find the value with the shortest call duration 
+```{r}
+min(bankn$duration)
+```
+max: using the "max" function we can find the value with the longest call duration 
+```{r}
+max(bankn$duration)
+```
+missing values: From the summary of the vector we can see that there are no missing values present in the vector
+
+noise: When looking at the structure of the data set we see that the "duration" factor consists of purely integers
+
+outliers: With the use of a box plot we can see if any outliers exist
+```{r}
+boxplot(bankn$duration)
+```
+
+From the result of the box plot we can see there are many outliers but with the nature or the feature in question these outliers can be considered valid data as the length of time a person would be willing to stay on the phone may vary 
 
 ### Deposit
 ```{r}
