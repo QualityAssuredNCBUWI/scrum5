@@ -580,8 +580,54 @@ plot.xts(deposits.xts[months(index(deposits.xts)) %in% month.name[1:3]], main = 
 
 ----
 ```{r, fig.align='center', fig.cap="Time Series Showing Deposits in 3rd Quarter of the Year"}
-plot.xts(deposits.xts[months(index(deposits.xts)) %in% month.name[7:9]], main = "", col = "red")
+plot.xts(deposits.xts[months(index(deposits.xts)) %in% month.name[7:9]], main = "", col = "blue")
 ```
+
+# Question 7
+
+## Question 7 | a. Which categories of jobs have the highest and lowest average deposits?
+
+```{r}
+job_deposits <- aggregate(bankn$deposit, by = list(bankn$job), FUN = mean, na.rm = TRUE)
+colnames(job_deposits) <- c("job", "avg_deposit")
+job_deposits$avg_deposit <- round(job_deposits$avg_deposit, digits = 2)
+job.max <- job_deposits[job_deposits$avg_deposit == max(job_deposits$avg_deposit),]
+job.min <- job_deposits[job_deposits$avg_deposit == min(job_deposits$avg_deposit),]
+job_deposits_chart <- ggplot(job_deposits, aes(x=job, y=avg_deposit)) +
+  geom_segment( aes(x=job, xend=job, y=0, yend=avg_deposit)) +
+  geom_point( size=5, color="red", fill=alpha("orange", 0.3), alpha=0.7, shape=21, stroke=2) +
+  labs(x="Job Category", y="Avg. Deposit")+theme_minimal()
+```
+
+---- 
+
+```{r, fig.align='center', fig.cap="Average deposit amount by job category.", fig.dim=c(9,5)}
+job_deposits_chart
+```
+
+## Question 7 | a. Which categories of jobs have the highest and lowest average deposits?
+
+### From the lollipop chart, we can see that:
+
+### - The category with the highest average deposit is: <strong>`r job.max$job`</strong>  at \$`r job.max$avg_deposit`
+
+### - The category with the lowest average deposit is: <strong>`r job.min$job`</strong> at \$`r job.min$avg_deposit`
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
