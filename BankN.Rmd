@@ -435,5 +435,66 @@ head(bankn$age, n = 5)
 ## Question 4 | Apply one of the normalization methods discussed to any feature in the dataset. Justify your decision.
 
 
+# Question 5
+
+## Question 5 | Construct a new column (variable) called <strong>last_deposit</strong> which records the number of days since the client made a deposit. Use the month and day columns and calculate this value with the current date.
+
+## Question 5 | What was done?
+
+1. We converted the day and month fields into Date objects.
+2. We noticed that there were dates in the future.
+3. We set back dates in the future by one year.
+4. Subtracted those dates from the current date to get the number of days between them.
+
+```{r}
+temp <- as.Date(paste(bankn$day,bankn$month,"2019",sep = " "), format = "%d %B %Y")
+# temp <- ifelse(temp >= Sys.Date(), temp - 365, temp)
+# class(temp) <- "Date"
+temp
+bankn$last_deposit <- Sys.Date() - temp
+```
+
+## Question 5 | Result
+
+```{r}
+head(bankn[c(9,10,14)], n = 5)
+```
+
+# Question 6
+
+## Question 6 | Plot time-series graph(s) to show comparison between deposits made over 2 comparative periods
+within the data (month/quarter).
+
+1. Add a new field to store the date object of the last deposit
+
+```{r}
+# Create new column
+bankn$deposit_date <- temp
+# Rearrange to place beside original day and month
+bankn <- bankn[, colnames(bankn)[c(1:10,15,11:14)]]
+```
+
+## Create Time Series
+
+Using <strong>tseries</strong> library:
+```{r}
+library(forecast)
+library(tseries)
+library(tidyquant)
+
+# ------- Remove once deposits are fixed -------
+bankn <- bankn[!is.na(bankn$deposit) | bankn$deposit_date == "NA",]
+# ----------------------------------------------
+
+deposits.xts <- xts(bankn$deposit, bankn$deposit_date)
+
+```
+
+
+
+
+
+
+
 
 
