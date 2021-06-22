@@ -31,6 +31,15 @@ mode <- function(v, empty = FALSE) {
   uniqv <- unique(v)
   uniqv[which.max(tabulate(match(v, uniqv)))]
 }
+
+antimode <- function(v, empty = FALSE) {
+  if(empty){
+    v = v[v != ""]
+  }
+  uniqv <- unique(v)
+  uniqv[which.min(tabulate(match(v, uniqv)))]
+}
+
 ```
 
 ## Question 1
@@ -244,17 +253,15 @@ jobs
 ```
 
 
-## Summary of Data Cont'd
+## Summary of Data | Housing
 
-### Housing
 ```{r}
 summary(bankn$housing)
 ```
 - The housing data is categorical, so no standard values were obtained from it, it simply gave a count of yes or no. There were also no outlier or missing values.
 
-## Summary of Data Cont'd
+## Summary of Data | Loan
 
-### Loan
 - ***Does this person have a personal loan***
 ```{r}
 summary(bankn$loan)
@@ -287,9 +294,8 @@ summary(bankn$contact)
 ```
 - The contact column is empty and has no value. It cannot be used in analysis.
 
-## Summary of Data Cont'd
+## Summary of Data | Day
 
-### Day
 ```{r}
 summary(bankn$day)
 ```
@@ -510,15 +516,35 @@ library(tseries)
 library(tidyquant)
 
 # ------- Remove once deposits are fixed -------
-bankn <- bankn[!is.na(bankn$deposit) | !is.na(bankn$deposit_date),]
+bankn <- bankn[!is.na(bankn$deposit),]
 # ----------------------------------------------
 
 deposits.xts <- xts(bankn$deposit, bankn$deposit_date)
+colnames(deposits.xts) <- "deposits"
+
+plot.xts(deposits.xts)
+```
+
+## Choosing Quarters
+We chose the quarter with the highest total deposit and 
+the quarter with the lowest total deposit.
+We considered using the busiest quarter and the most idle quarter. But the values were quite close.
+Also we could garner more insights using deposits, for example did persons deposit in larger sums or small sums over a multiple deposits.
+
+```{r}
+SUM(bankn[bankn$month %in% c('january','february','march'),"deposit"])
+SUM(bankn[bankn$month %in% c('april','may','june'),"deposit"])
+SUM(bankn[bankn$month %in% c('july','august','september'),"deposit"])
+SUM(bankn[bankn$month %in% c('october','november','december'),"deposit"])
 
 ```
 
+## 
 
 
+```{r}
+plot.xts(deposits.xts[months(index(deposits.xts)) %in% month.name[1:3]])
+```
 
 
 
