@@ -166,6 +166,7 @@ ggplot(bankn[bankn$education == "primary",c(3,5)], aes(x="", y=job, fill=job)) +
   geom_bar(stat="identity", width=1) +coord_polar("y", start=0) + theme_void()
 ```
 
+
 ## Analysis
 With this information we can assign an education level to match the prevalence 
 of that job at that level.
@@ -254,14 +255,31 @@ summary(bankn$housing)
 ## Summary of Data Cont'd
 
 ### Loan
+- ***Does this person have a personal loan***
 ```{r}
 summary(bankn$loan)
 levels(bankn$loan)
 ```
-- The loan data is representing a boolean if the user has a loan or not
-- It is represented as categorical variable with values "yes" or "no"
+- The loan data is representing a Boolean if the user has a loan or not
+- It is represented as categorical measurement with values "yes" or "no"
 - There are 15 missing values that are read as a blank field in the dataframe.
 - This data column has good data as 1103 of the field data value is filled
+
+The loan categorical measurement have 15 missing values. These missing values 
+can be removed or it can be replaced. The option to replace the values were 
+considered. 
+Normally, to get a loan the applicants, job, finances, age, credit  and other loans are normally considered in a financial institution. However, the dataset shows the value for loans being empty. The option to use the jobs, age, education
+and mortgage was considered to decide if a user has a loan or not. However, although a model can dictate the possibility of someone being given a loan. It is
+not 100% correct that the person had a loan.Therefore, to solve the issue the
+empty values for the loans were set to no. It was assumed that an empty value 
+is a representation of the user being skipped due to them not having a loan. 
+
+
+- The spaces set to "no"
+```{r}
+bankn[bankn$loan == "", "loan"] <- "no"
+```
+
 
 ### Contact
 ```{r}
@@ -304,6 +322,15 @@ missing values :
 
 ```{r}
 sum(is.na(bankn$month))
+```
+
+# Fixing Errors/Unknown Values
+```{r}
+onlyFebDates <- bankn[bankn$month=="february" & bankn$day>28,]
+onlyFebDates$day <- onlyFebDates$day-28 
+onlyFebDates$month <- "march"
+bankn[bankn$month=="february" & bankn$day>28,] <- onlyFebDates
+
 ```
 
 ## Summary of Data | Duration
