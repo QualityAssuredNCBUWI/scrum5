@@ -61,7 +61,7 @@ There does not appear to be any outliers or missing values.
 
 ## Summary of Data | Age
 
-- ***numeric age of the customer***
+- numeric age of the customer
 ```{r}
 summary(bankn$age)
 ```
@@ -79,7 +79,7 @@ summary(bankn$age)
 
 ## Summary of Data | Marital Status
 
-- ***Marital status ("married","divorced","single"; note: "divorced" means divorced or widowed)***
+- Marital status ("married","divorced","single"; note: "divorced" means divorced or widowed)
 
 ```{r}
 summary(bankn$marital)
@@ -88,7 +88,7 @@ Nothing appears to be extraordinary in the marital status field.
 
 ## Summary of Data | Job
 
-***Types of Job ("admin.", "unemployed", "management","housemaid", "entrepreneur", "student", "blue-collar","self-employed", "retired", "technician", "services")***
+Types of Job ("admin.", "unemployed", "management","housemaid", "entrepreneur", "student", "blue-collar","self-employed", "retired", "technician", "services")
 
 ```{r}
 summary(bankn$job)
