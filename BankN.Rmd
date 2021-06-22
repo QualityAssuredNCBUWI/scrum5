@@ -119,6 +119,27 @@ summary(bankn$deposit)
 ```
 
 ## Summary of Data Cont'd
+The deposit feature stores the amount of money deposited by a customer during their last transaction.A box plot revealed that there are several outliers within this feature. The values are  majority numeric. The measurement type is ratio since there are absolute zeros present. There are also several missing values of type NA.
+
+```{r}
+boxplot(bankn$deposit)
+```
+###Fixing Missing Values in Deposit. 
+There are 152 missing values missing within the data. In order to fix them, central tendency is used.Specifically, the mean is used because the data is skewed.
+```{r}
+hist(bankn$deposit)
+```
+```{r}
+bankn[is.na(bankn$deposit),"deposit"] <- mean(bankn$deposit,na.rm=T)
+
+```
+###Fixing outliers within Deposit 
+
+
+
+
+
+
 
 ### Balance
 ```{r}
