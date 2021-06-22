@@ -166,6 +166,7 @@ ggplot(bankn[bankn$education == "primary",c(3,5)], aes(x="", y=job, fill=job)) +
   geom_bar(stat="identity", width=1) +coord_polar("y", start=0) + theme_void()
 ```
 
+
 ## Analysis
 With this information we can assign an education level to match the prevalence 
 of that job at that level.
@@ -304,6 +305,15 @@ missing values :
 
 ```{r}
 sum(is.na(bankn$month))
+```
+
+# Fixing Errors/Unknown Values
+```{r}
+onlyFebDates <- bankn[bankn$month=="february" & bankn$day>28,]
+onlyFebDates$day <- onlyFebDates$day-28 
+onlyFebDates$month <- "march"
+bankn[bankn$month=="february" & bankn$day>28,] <- onlyFebDates
+
 ```
 
 ## Summary of Data | Duration
