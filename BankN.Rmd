@@ -397,10 +397,26 @@ for (i in 1:nrow(missing_deposits)){
 
 bankn[is.na(bankn$deposit) | bankn$deposit==0,] <- missing_deposits
 
-hist(bankn$deposit)
 ```
 
 
+## Removing outliers
+```{r}
+sd_deposit <- sd(bankn$deposit)
+mean_deposit <- mean(bankn$deposit)
+upper_limit <- mean_deposit + (2*sd_deposit)
+lower_limit <- mean_deposit - (2*sd_deposit)
+
+for(i in 1:nrow(bankn)){
+  if(bankn[i,'deposit'] > upper_limit){
+    bankn[i,'deposit'] <- upper_limit
+  }
+  
+  if(bankn[i,'deposit'] < lower_limit){
+    bankn[i,'deposit'] <- lower_limit
+  }
+}
+```
 
 
 ## Summary of Data | Balance
@@ -446,13 +462,35 @@ median_list <- aggregate(bankn$deposit, by=list(bankn$job), FUN=median, na.rm = 
 
 median_list <- median_list[c(which(median_list[,1] %in% balance_na_jobs)),]
 
-bankn_missing_balace <- bankn[is.na(bankn$balance),]
+bankn_missing_balance <- bankn[is.na(bankn$balance),]
 
-for(i in 1:nrow(bankn_missing_balace)){
-  bankn_missing_balace[i,'balance'] <- median_list[median_list$Group.1 == (bankn_missing_balace[i,'job']),'x']
+for(i in 1:nrow(bankn_missing_balance)){
+  bankn_missing_balance[i,'balance'] <- median_list[median_list$Group.1 == (bankn_missing_balance[i,'job']),'x']
 }
 
-bankn[is.na(bankn$balance),] = bankn_missing_balace
+bankn[is.na(bankn$balance),] = bankn_missing_balance
+```
+
+
+## Fixing outliers
+
+```{r}
+sd_balance <- sd(bankn$balance)
+mean_balance <- mean(bankn$balance)
+upper_limit <- mean_balance + (2*sd_balance)
+lower_limit <- mean_balance - (2*sd_balance)
+
+for(i in 1:nrow(bankn)){
+  if(bankn[i,'balance'] > upper_limit){
+    bankn[i,'balance'] <- upper_limit
+  }
+  
+  if(bankn[i,'balance'] < lower_limit){
+    bankn[i,'balance'] <- lower_limit
+  }
+}
+
+boxplot(bankn$balance)
 ```
 
 
