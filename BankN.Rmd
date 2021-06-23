@@ -678,9 +678,11 @@ plot.xts(deposits.xts[months(index(deposits.xts)) %in% month.name[1:3]], main = 
 plot.xts(deposits.xts[months(index(deposits.xts)) %in% month.name[7:9]], main = "", col = "red")
 ```
 
-# question 7b
 
-## What is the dominant educational level of each category of job?
+
+# Question 7 
+
+## b. What is the dominant educational level of each category of job?
 
 Admin: Secondary(136)
 ```{r}
@@ -749,9 +751,17 @@ jobs_unemployed <- bankn[bankn$job == 'unemployed',]
 summary(jobs_unemployed$education)
 ```
 
-# question 7e
+## c. What percentage of persons have both mortgage and personal loan?
+```{r}
+mortgage_and_loan <- bankn[,c("housing", "loan")]
+mortgage_and_loan.percent <- COUNT(mortgage_and_loan[mortgage_and_loan$housing == "yes" & mortgage_and_loan$loan == "yes",])/ COUNT(mortgage_and_loan$housing) *100
 
-## Is there a correlation between deposit and balance? Discuss the findings. Explain the implications.
+```
+
+- The percentage of persons who have both mortgage and personal loan is `r mortgage_and_loan.percent`%. 
+
+
+## e. Is there a correlation between deposit and balance? Discuss the findings. Explain the implications.
 
 ```{r}
  cor.test(bankn$deposit,bankn$balance, alternative = 'greater')
@@ -760,3 +770,20 @@ summary(jobs_unemployed$education)
 * Out correlation test was performed a a right tailed test with our null hypothesis stating that the 2 features have a correlation value of 0, representation that neither features affect each other in any way 
 
 * This test was performed at a confidence level of 95, meaning that we are 95% sure that the results of the correlation test are correct
+
+
+## f. What percentage of customers who are married also are in overdraft?
+```{r}
+married_customer <- bankn[, c("marital", "balance")] 
+
+married_customer.percent <- COUNT(married_customer[married_customer$marital == "married" & married_customer$balance < 0,]) /COUNT(married_customer$marital) *100
+```
+- The percentage of customers who are married and in overdraft is `r married_customer.percent`%. 
+
+
+
+## g. If the Bank wanted to launch a new loan product to target persons who may be considered to have the least credit risk, propose a metric to determine these persons. Use at least 3 features to justify/select your target profile. For example: RefNum < X AND Married AND education==”Tertiary”.
+
+- ii. You should extract the subset of data that meets the profile (this could be considered a lead list to be used by customer service to contact these customers). Consider that you will need to provide the bank with the RefNum for the customers they should be targeting.
+
+
