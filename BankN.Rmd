@@ -366,14 +366,35 @@ From the result of the box plot we can see there are many outliers but with the 
 
 ## Summary of Data | Deposit
 ```{r}
-summary(bankn$deposit)
+summary(bankn$deposit[bankn$job=='admin'])
 ```
+
+## Fixing the missing values and noise
+```{r}
+
+median_list <- aggregate(bankn$deposit, by=list(bankn$job), FUN=median, na.rm = TRUE)
+
+missing_deposits <- bankn[is.na(bankn$deposit) | bankn$deposit==0,]
+
+for (i in 1:nrow(missing_deposits)){
+  missing_deposits[i,'deposit'] <- median_list[median_list$Group.1 == (missing_deposits[i,'job']),'x']
+}
+
+bankn[is.na(bankn$deposit) | bankn$deposit==0,] <- missing_deposits
+
+hist(bankn$deposit)
+```
+
+
+
 
 ## Summary of Data | Balance
 
 ```{r}
 summary(bankn$balance, maxsum = 10)
 ```
+
+
 
 - Std. Deviation won't work because of characters. Thats why the data type is factor and not numeric
 
@@ -391,6 +412,32 @@ bankn$balance[c(8, 54, 26, 87)]
 ```{r echo=FALSE}
 str(bankn)
 #levels(bankn$job)
+```
+## Removing noise 
+
+In order to convert the balance feature to a numeric type instead of a factor type we make use of the as.numeric and as.character functions
+```{r}
+
+bankn$balance <- as.numeric(as.character(bankn$balance))
+
+
+```
+## Replace Na 
+
+```{r}
+balance_na_jobs <- unique(bankn[is.na(bankn$balance),3])
+
+median_list <- aggregate(bankn$deposit, by=list(bankn$job), FUN=median, na.rm = TRUE)
+
+median_list <- median_list[c(which(median_list[,1] %in% balance_na_jobs)),]
+
+bankn_missing_balace <- bankn[is.na(bankn$balance),]
+
+for(i in 1:nrow(bankn_missing_balace)){
+  bankn_missing_balace[i,'balance'] <- median_list[median_list$Group.1 == (bankn_missing_balace[i,'job']),'x']
+}
+
+bankn[is.na(bankn$balance),] = bankn_missing_balace
 ```
 
 
@@ -517,6 +564,12 @@ deposits.xts <- xts(bankn$deposit, bankn$deposit_date)
 
 ```
 
+
++ 7e 
+
+```{r}
+cor.test(bankn$deposit,bankn$balance)
+```
 
 
 
