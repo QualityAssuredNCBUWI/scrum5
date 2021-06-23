@@ -670,6 +670,38 @@ plot.xts(deposits.xts[months(index(deposits.xts)) %in% month.name[7:9]], main = 
 
 
 
+# Question 7 
+
+## c. What percentage of persons have both mortgage and personal loan?
+```{r}
+mortgage_and_loan <- bankn[,c("housing", "loan")]
+mortgage_and_loan.percent <- COUNT(mortgage_and_loan[mortgage_and_loan$housing == "yes" & mortgage_and_loan$loan == "yes",])/ COUNT(mortgage_and_loan$housing) *100
+
+```
+
+- The percentage of persons who have both mortgage and personal loan is `r mortgage_and_loan.percent`%. 
+
+
+
+
+## f. What percentage of customers who are married also are in overdraft?
+```{r}
+married_customer <- bankn[, c("marital", "balance")] 
+
+married_customer.percent <- COUNT(married_customer[married_customer$marital == "married" & married_customer$balance < 0,]) /COUNT(married_customer$marital) *100
+```
+- The percentage of customers who are married and in overdraft is `r married_customer.percent`%. 
+
+
+
+## g. If the Bank wanted to launch a new loan product to target persons who may be considered to have the least credit risk, propose a metric to determine these persons. Use at least 3 features to justify/select your target profile. For example: RefNum < X AND Married AND education==”Tertiary”.
+
+- ii. You should extract the subset of data that meets the profile (this could be considered a lead list to be used by customer service to contact these customers). Consider that you will need to provide the bank with the RefNum for the customers they should be targeting.
+
+
+
+
+
 
 
 
