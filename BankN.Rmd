@@ -381,14 +381,114 @@ From the result of the box plot we can see there are many outliers but with the 
 
 ## Summary of Data | Deposit
 ```{r}
+summary(bankn$deposit[bankn$job=='admin'])
+```
+
+## Fixing the missing values and noise
+```{r}
+
+median_list <- aggregate(bankn$deposit, by=list(bankn$job), FUN=median, na.rm = TRUE)
+
+missing_deposits <- bankn[is.na(bankn$deposit) | bankn$deposit==0,]
+
+for (i in 1:nrow(missing_deposits)){
+  missing_deposits[i,'deposit'] <- median_list[median_list$Group.1 == (missing_deposits[i,'job']),'x']
+}
+
+bankn[is.na(bankn$deposit) | bankn$deposit==0,] <- missing_deposits
+
+```
+
+
+## Removing outliers
+```{r}
+sd_deposit <- sd(bankn$deposit)
+mean_deposit <- mean(bankn$deposit)
+upper_limit <- mean_deposit + (2*sd_deposit)
+lower_limit <- mean_deposit - (2*sd_deposit)
+
+for(i in 1:nrow(bankn)){
+  if(bankn[i,'deposit'] > upper_limit){
+    bankn[i,'deposit'] <- upper_limit
+  }
+  
+  if(bankn[i,'deposit'] < lower_limit){
+    bankn[i,'deposit'] <- lower_limit
+  }
+}
+```
+## Summary of Data Cont'd
+The deposit feature stores the amount of money deposited by a customer during their last transaction.A box plot revealed that there are several outliers within this feature. The values are  majority numeric. The measurement type is ratio since there are absolute zeros present. There are also several missing values of type NA.
+
+```{r}
+boxplot(bankn$deposit)
+```
+
+###Fixing Missing Values in Deposit. 
+There are 152 missing values missing within the data. In order to fix them, central tendency is used.Specifically, the mean is used because the data is skewed.The missing values will be replaced with the median for individual's who are grouped by the job feature.
+```{r}
+bankn[is.na(bankn$deposit),]
+```
+```{r}
+bankn[(bankn$deposit==0),]
+```
+
+```{r}
+median_list <- aggregate(bankn$deposit, by=list(bankn$job), FUN=median, na.rm= TRUE)
+print(median_list)
+```
+```{r}
 summary(bankn$deposit)
 ```
 
+ Replacing all NA values and zeros with median values based on job.
+```{r}
+bankn$deposit[(is.na(bankn$deposit) | bankn$deposit == 0.0) & bankn$job=='admin.'] = median_list[1,2]
+bankn$deposit[(is.na(bankn$deposit) | bankn$deposit == 0.0) & bankn$job=='blue-collar'] = median_list[2,2]
+bankn$deposit[(is.na(bankn$deposit) | bankn$deposit == 0.0) & bankn$job=='entrepreneur'] = median_list[3,2]
+bankn$deposit[(is.na(bankn$deposit) | bankn$deposit == 0.0) & bankn$job=='housemaid'] = median_list[4,2]
+bankn$deposit[(is.na(bankn$deposit) | bankn$deposit == 0.0) & bankn$job=='management'] = median_list[5,2]
+bankn$deposit[(is.na(bankn$deposit) | bankn$deposit == 0.0) & bankn$job=='retired'] = median_list[6,2]
+bankn$deposit[(is.na(bankn$deposit) | bankn$deposit == 0.0) & bankn$job=='self-employed'] = median_list[7,2]
+bankn$deposit[(is.na(bankn$deposit) | bankn$deposit == 0.0) & bankn$job=='services'] = median_list[8,2]
+bankn$deposit[(is.na(bankn$deposit) | bankn$deposit == 0.0) & bankn$job=='student'] = median_list[9,2]
+bankn$deposit[(is.na(bankn$deposit) | bankn$deposit == 0.0) & bankn$job=='technician'] = median_list[10,2]
+bankn$deposit[(is.na(bankn$deposit) | bankn$deposit == 0.0) & bankn$job=='unemployed'] = median_list[11,2]
+```
+
+```{r}
+summary(bankn$deposit)
+```
+```{r}
+summary(bankn)
+```
+
+
+```{r}
+hist(bankn$deposit)
+```
+
+###Fixing outliers within Deposit 
+```{r}
+d_min <- min(bankn$deposit)
+d_max <- max(bankn$deposit)
+summary(bankn$deposit)
+d_norm <- ((bankn[,"deposit"]- d_min) / (d_max - d_min))*((100-1) +1)
+bankn$deposit <- round(d_norm, digits = 0)
+summary(bankn$deposit)
+```
+
+<<<<<<< HEAD
+=======
+
 ## Summary of Data | Balance
+>>>>>>> 0b9ef1d6e48ee8db2b5ef18a31dc6d4bbc809b09
 
 ```{r}
 summary(bankn$balance, maxsum = 10)
 ```
+
+
 
 - Std. Deviation won't work because of characters. Thats why the data type is factor and not numeric
 
@@ -406,6 +506,54 @@ bankn$balance[c(8, 54, 26, 87)]
 ```{r echo=FALSE}
 str(bankn)
 #levels(bankn$job)
+```
+## Removing noise 
+
+In order to convert the balance feature to a numeric type instead of a factor type we make use of the as.numeric and as.character functions
+```{r}
+
+bankn$balance <- as.numeric(as.character(bankn$balance))
+
+
+```
+## Replace Na 
+
+```{r}
+balance_na_jobs <- unique(bankn[is.na(bankn$balance),3])
+
+median_list <- aggregate(bankn$deposit, by=list(bankn$job), FUN=median, na.rm = TRUE)
+
+median_list <- median_list[c(which(median_list[,1] %in% balance_na_jobs)),]
+
+bankn_missing_balance <- bankn[is.na(bankn$balance),]
+
+for(i in 1:nrow(bankn_missing_balance)){
+  bankn_missing_balance[i,'balance'] <- median_list[median_list$Group.1 == (bankn_missing_balance[i,'job']),'x']
+}
+
+bankn[is.na(bankn$balance),] = bankn_missing_balance
+```
+
+
+## Fixing outliers
+
+```{r}
+sd_balance <- sd(bankn$balance)
+mean_balance <- mean(bankn$balance)
+upper_limit <- mean_balance + (2*sd_balance)
+lower_limit <- mean_balance - (2*sd_balance)
+
+for(i in 1:nrow(bankn)){
+  if(bankn[i,'balance'] > upper_limit){
+    bankn[i,'balance'] <- upper_limit
+  }
+  
+  if(bankn[i,'balance'] < lower_limit){
+    bankn[i,'balance'] <- lower_limit
+  }
+}
+
+boxplot(bankn$balance)
 ```
 
 
@@ -475,6 +623,16 @@ head(bankn$age, n = 5)
 # Question 4
 
 ## Question 4 | Apply one of the normalization methods discussed to any feature in the dataset. Justify your decision.
+
+### Min-Max normalization
+```{r}
+d_min <- min(bankn$deposit)
+d_max <- max(bankn$deposit)
+
+d_norm <- ((bankn[,"deposit"]- d_min) / (d_max - d_min))*((40-1) +1)
+bankn$deposit <- round(d_norm, digits = 0)
+
+```
 
 
 # Question 5
@@ -634,6 +792,110 @@ age_balance <- aggregate(bankn$balance, by = list(bankn$age), FUN = mean, na.rm 
 
 
 
+# Question 7 
 
+## b. What is the dominant educational level of each category of job?
+
+Admin: Secondary(136)
+```{r}
+jobs_admin <- bankn[bankn$job == 'admin.',]
+
+summary(jobs_admin$education)
+```
+blue-collar: secondary(212)
+```{r}
+jobs_blue_collar <- bankn[bankn$job == 'blue-collar',]
+
+summary(jobs_blue_collar$education)
+```
+entrepreneur: tertiary(17)
+```{r}
+jobs_entrepreneur <- bankn[bankn$job == 'entrepreneur',]
+
+summary(jobs_entrepreneur$education)
+```
+housemaid: primary(7)
+```{r}
+jobs_housemaid <- bankn[bankn$job == 'housemaid',]
+
+summary(jobs_housemaid$education)
+```
+
+management: tertiary(123)
+```{r}
+jobs_management <- bankn[bankn$job == 'management',]
+
+summary(jobs_management$education)
+```
+
+retired: secondary(28)
+```{r}
+jobs_retired <- bankn[bankn$job == 'retired',]
+
+summary(jobs_retired$education)
+```
+
+self-employed: tertiary(14)
+```{r}
+jobs_self_employed <- bankn[bankn$job == 'self-employed',]
+
+summary(jobs_self_employed$education)
+```
+
+services: secondary(124)
+```{r}
+jobs_services <- bankn[bankn$job == 'services',]
+
+summary(jobs_services$education)
+```
+
+technician: secondary(127)
+```{r}
+jobs_technician <- bankn[bankn$job == 'technician',]
+
+summary(jobs_technician$education)
+```
+
+unemployed: secondary(15)
+```{r}
+jobs_unemployed <- bankn[bankn$job == 'unemployed',]
+
+summary(jobs_unemployed$education)
+```
+
+## c. What percentage of persons have both mortgage and personal loan?
+```{r}
+mortgage_and_loan <- bankn[,c("housing", "loan")]
+mortgage_and_loan.percent <- COUNT(mortgage_and_loan[mortgage_and_loan$housing == "yes" & mortgage_and_loan$loan == "yes",])/ COUNT(mortgage_and_loan$housing) *100
+
+```
+
+- The percentage of persons who have both mortgage and personal loan is `r mortgage_and_loan.percent`%. 
+
+
+## e. Is there a correlation between deposit and balance? Discuss the findings. Explain the implications.
+
+```{r}
+ cor.test(bankn$deposit,bankn$balance, alternative = 'greater')
+```
+
+* Out correlation test was performed a a right tailed test with our null hypothesis stating that the 2 features have a correlation value of 0, representation that neither features affect each other in any way 
+
+* This test was performed at a confidence level of 95, meaning that we are 95% sure that the results of the correlation test are correct
+
+
+## f. What percentage of customers who are married also are in overdraft?
+```{r}
+married_customer <- bankn[, c("marital", "balance")] 
+
+married_customer.percent <- COUNT(married_customer[married_customer$marital == "married" & married_customer$balance < 0,]) /COUNT(married_customer$marital) *100
+```
+- The percentage of customers who are married and in overdraft is `r married_customer.percent`%. 
+
+
+
+## g. If the Bank wanted to launch a new loan product to target persons who may be considered to have the least credit risk, propose a metric to determine these persons. Use at least 3 features to justify/select your target profile. For example: RefNum < X AND Married AND education==”Tertiary”.
+
+- ii. You should extract the subset of data that meets the profile (this could be considered a lead list to be used by customer service to contact these customers). Consider that you will need to provide the bank with the RefNum for the customers they should be targeting.
 
 
