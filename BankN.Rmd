@@ -727,6 +727,8 @@ rownames(quarts) <- c("1st", "2nd","3rd","4th")
 colnames(quarts) <- c("deposits")
 busy <- rownames(quarts)[quarts$deposits == max(quarts$deposits)]
 idle <- rownames(quarts)[quarts$deposits == min(quarts$deposits)]
+busy
+idle
 ```
 
 # Plotting the Graphs
@@ -771,28 +773,6 @@ job_deposits_chart
 
 ### - The category with the lowest average deposit is: <strong>`r job.min$job`</strong> at \$`r job.min$avg_deposit`
 
-
-## Question 7 | d. Which age-group has the highest average balance?
-
-```{r}
-age_balance <- aggregate(bankn$balance, by = list(bankn$age), FUN = mean, na.rm = TRUE)
-```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# Question 7 
 
 ## b. What is the dominant educational level of each category of job?
 
@@ -871,6 +851,31 @@ mortgage_and_loan.percent <- COUNT(mortgage_and_loan[mortgage_and_loan$housing =
 ```
 
 - The percentage of persons who have both mortgage and personal loan is `r mortgage_and_loan.percent`%. 
+
+
+## Question 7 | d. Which age-group has the highest average balance?
+
+```{r}
+age_balance <- aggregate(bankn$balance, by = list(bankn$age), FUN = mean, na.rm = TRUE)
+colnames(age_balance) <- c("Age_Group","Avg.Balance")
+age_balance_chart <- ggplot(data = age_balance, aes(x=Age_Group, y=Avg.Balance, fill=Age_Group)) +
+  geom_bar(stat = "identity") + labs(title="Avg. Balance by Age Group")+ 
+  theme(axis.text.x=element_blank(),
+        axis.ticks.x=element_blank())
+age_balance.max <- age_balance[age_balance$Avg.Balance == max(age_balance$Avg.Balance),]
+```
+
+----
+```{r}
+age_balance_chart
+```
+
+## Question 7 | d. Which age-group has the highest average balance?
+
+### From the bar chart, we can see that:
+
+### - The age group with the highest average balance is: <strong>`r age_balance.max$Age_Group`</strong>  at \$`r round(age_balance.max$Avg.Balance, digits = 2)`
+
 
 
 ## e. Is there a correlation between deposit and balance? Discuss the findings. Explain the implications.
