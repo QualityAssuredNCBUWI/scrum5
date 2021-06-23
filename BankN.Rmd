@@ -614,8 +614,11 @@ job_deposits_chart
 ### - The category with the lowest average deposit is: <strong>`r job.min$job`</strong> at \$`r job.min$avg_deposit`
 
 
+## Question 7 | d. Which age-group has the highest average balance?
 
-
+```{r}
+age_balance <- aggregate(bankn$balance, by = list(bankn$age), FUN = mean, na.rm = TRUE)
+```
 
 
 
