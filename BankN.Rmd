@@ -963,13 +963,6 @@ ii. You should extract the subset of data that meets the profile (this could be 
 hist(bankn$deposit, breaks=50)
 ```
 
-## Last Deposit
-
-  Consider persons who have only deposited in the final quarter of the year. These persons would perhaps be depositing more frequently, which could indicate a steady income.
-  
-```{r}
-fourth <- bankn[bankn$month %in% c('october','november','december'),]
-```
 
 ## Job 
 
@@ -981,7 +974,8 @@ fourth <- bankn[bankn$month %in% c('october','november','december'),]
   - Management
   - Services
   - Technician
-  
+
+
 ## Education
 
 ## Loan 
@@ -989,7 +983,11 @@ fourth <- bankn[bankn$month %in% c('october','november','december'),]
   If a person has a loan already, they would not be considered to be marketed to for another.
   
 ## Balance
+
+## Housing 
+
   
+## Age 
 
 ```{r}
 risk_scores <- bankn[,]
