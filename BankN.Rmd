@@ -920,70 +920,70 @@ job_deposits_chart
 
 ## b. What is the dominant educational level of each category of job?
 
-Admin: Secondary(136)
+* Admin: Secondary(136)
 ```{r}
 jobs_admin <- bankn[bankn$job == 'admin.',]
-
 summary(jobs_admin$education)
 ```
-blue-collar: secondary(212)
+* blue-collar: secondary(212)
 ```{r}
 jobs_blue_collar <- bankn[bankn$job == 'blue-collar',]
-
 summary(jobs_blue_collar$education)
 ```
-entrepreneur: tertiary(17)
+
+## b. What is the dominant educational level of each category of job?
+
+* entrepreneur: tertiary(17)
 ```{r}
 jobs_entrepreneur <- bankn[bankn$job == 'entrepreneur',]
-
 summary(jobs_entrepreneur$education)
 ```
-housemaid: primary(7)
+
+* housemaid: primary(7)
 ```{r}
 jobs_housemaid <- bankn[bankn$job == 'housemaid',]
-
 summary(jobs_housemaid$education)
 ```
 
-management: tertiary(123)
+## b. What is the dominant educational level of each category of job?
+
+* management: tertiary(123)
 ```{r}
 jobs_management <- bankn[bankn$job == 'management',]
-
 summary(jobs_management$education)
 ```
 
-retired: secondary(28)
+* retired: secondary(28)
 ```{r}
 jobs_retired <- bankn[bankn$job == 'retired',]
-
 summary(jobs_retired$education)
 ```
 
-self-employed: tertiary(14)
+## b. What is the dominant educational level of each category of job?
+
+* self-employed: tertiary(14)
 ```{r}
 jobs_self_employed <- bankn[bankn$job == 'self-employed',]
-
 summary(jobs_self_employed$education)
 ```
 
-services: secondary(124)
+* services: secondary(124)
 ```{r}
 jobs_services <- bankn[bankn$job == 'services',]
-
 summary(jobs_services$education)
 ```
 
-technician: secondary(127)
+## b. What is the dominant educational level of each category of job?
+
+* technician: secondary(127)
 ```{r}
 jobs_technician <- bankn[bankn$job == 'technician',]
-
 summary(jobs_technician$education)
 ```
 
-unemployed: secondary(15)
+* unemployed: secondary(15)
 ```{r}
 jobs_unemployed <- bankn[bankn$job == 'unemployed',]
-
 summary(jobs_unemployed$education)
 ```
 
@@ -1041,6 +1041,7 @@ barplot(prop.table(table(bankn$age)))
 ```{r}
  cor.test(bankn$deposit,bankn$balance, alternative = 'greater')
 ```
+## e. Is there a correlation between deposit and balance? Discuss the findings. Explain the implications.
 
 * Out correlation test was performed a a right tailed test with our null hypothesis stating that the 2 features have a correlation value of 0, representation that neither features affect each other in any way 
 
