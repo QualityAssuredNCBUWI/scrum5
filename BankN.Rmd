@@ -55,6 +55,9 @@ antimode <- function(v, empty = FALSE) {
 ### Problem:
 In light of the Covid-19 Pandemic, BankN has notable reductions in transactions, deposits, and commitments to a number of their financial products.
 
+
+
+### Proposed Solution:
 They require QualityAssured to perform complex analysis of their customers from pre-pandemic data to allow for: 
 
 - meaningful insights to aid in decision making 
@@ -71,8 +74,6 @@ An outlier refers to
 
 
 # Data Cleaning & Observations
-
-# Data Cleaning and Observation
 
 ## Data Cleaning and Observation
 
