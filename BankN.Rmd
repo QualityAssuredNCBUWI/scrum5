@@ -1002,6 +1002,10 @@ risk_scores$job <- ifelse(risk_scores$job == "admin.", 3,
 
 ## Education
 
+```{r}
+risk_scores$education <- ifelse(risk_scores$education == "primary", 1, ifelse(risk_scores$education == "secondary", 2, 3))
+```
+
 ## Loan 
 
   If a person has a loan already, they would not be considered to be marketed to for another.
