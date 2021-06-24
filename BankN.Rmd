@@ -683,14 +683,12 @@ lines(density(bankn$deposit), lwd = 1, col = "blue")
 
 ## Question 5 | What was done?
 
-1. We converted the day and month fields into Date objects.
-2. We noticed that there were dates in the future.
-3. We set back dates in the future by one year.
-4. Subtracted those dates from the current date to get the number of days between them.
+1. We converted the day and month fields into Date objects in 2019.
+2. We subtracted those dates from the current date to get the number of days between them.
 
 ```{r}
 temp <- as.Date(paste(bankn$day,bankn$month,"2019",sep = " "), format = "%d %B %Y")
-head(temp)
+kable(head(temp, n=3))
 bankn$last_deposit <- Sys.Date() - temp
 ```
 
