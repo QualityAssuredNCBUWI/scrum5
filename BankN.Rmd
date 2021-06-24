@@ -1136,19 +1136,23 @@ Remember, The average is greatly affected by the representation of age groups in
 barplot(prop.table(table(bankn$age)))
 ```
 
-## e. Is there a correlation between deposit and balance? Discuss the findings. Explain the implications.
+# Data Analysis | Is there a correlation between deposit and balance? Discuss the findings. Explain the implications.
+
+## Data Analysis | Is there a correlation between deposit and balance? Discuss the findings. Explain the implications.
 
 ```{r}
  cor.test(bankn$deposit,bankn$balance, alternative = 'greater')
 ```
-## e. Is there a correlation between deposit and balance? Discuss the findings. Explain the implications.
+## Data Analysis | Is there a correlation between deposit and balance? Discuss the findings. Explain the implications.
 
 * Out correlation test was performed a a right tailed test with our null hypothesis stating that the 2 features have a correlation value of 0, representation that neither features affect each other in any way 
 
 * This test was performed at a confidence level of 95, meaning that we are 95% sure that the results of the correlation test are correct
 
+# Data Analysis | What percentage of customers who are married also are in overdraft?
 
-## f. What percentage of customers who are married also are in overdraft?
+
+## Data Analysis | What percentage of customers who are married also are in overdraft?
 ```{r}
 married_customer <- bankn[, c("marital", "balance")] 
 
@@ -1156,9 +1160,9 @@ married_customer.percent <- COUNT(married_customer[married_customer$marital == "
 ```
 - The percentage of customers who are married and in overdraft is `r married_customer.percent`%. 
 
+# Data Analysis | Propose metric to determine customers with least credit risk.
 
-
-## g. Propose metric to determine customers with least credit risk.
+## Data Analysis | Propose metric to determine customers with least credit risk.
 
 ### Why? 
 The Bank wants to launch a new loan product to target persons who may be considered to have the least credit risk
