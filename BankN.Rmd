@@ -970,18 +970,21 @@ married_customer.percent <- COUNT(married_customer[married_customer$marital == "
 ## g. Propose metric to determine customers with least credit risk.
 
 ### Why? 
-The Bank wants to launch a new loan product to target persons who may be considered to have the least credit risk, propose a metric to determine these persons.
+The Bank wants to launch a new loan product to target persons who may be considered to have the least credit risk
 
+### We will: 
 i. Justification for chosen metrics
 
 ii. Present subset of data/Lead List that meets the profile 
 
 
-# Question 7 | g
+# Background of Credit Risk Assessment
 
 ## What is Credit Risk?
 
 #### Credit risk is the possibility of a loss resulting from a borrower's failure to repay a loan or meet contractual obligations.
+
+#### 
 
 #### We can use the data available to us to create a metric to determine which persons have the least credit risk.
 
@@ -1199,8 +1202,14 @@ bankn$Category <- ifelse(risk_scores$TotalScore <= 8, "Very High",
 ## Extract the low risk customers
 ```{r}
 low_risk <- risk_scores[risk_scores$Category =="Low",] 
+```
+### 29% of customers are low risk: 
+```{r}
 bankn.low_risk <- bankn[bankn$Category =="Low",] 
 COUNT(low_risk$Category)/ COUNT(risk_scores$Category) *100
+```
+### Therefor 324 persons meet this criteria of "low risk"
+```{r}
 summary(low_risk$Category)
 ```
 
