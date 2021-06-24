@@ -980,6 +980,20 @@ hist(bankn$deposit, breaks=50)
   - Management
   - Services
   - Technician
+```{r}
+risk_scores$job <- ifelse(risk_scores$job == "admin.", 3, 
+                   ifelse(risk_scores$job == "unemployed", 1, 
+                   ifelse(risk_scores$job == "management", 3, 
+                   ifelse(risk_scores$job == "housemaid", 2, 
+                   ifelse(risk_scores$job == "entrepreneur", 2, 
+                   ifelse(risk_scores$job == "student", 1, 
+                   ifelse(risk_scores$job == "blue-collar", 3, 
+                   ifelse(risk_scores$job == "self-employed", 2, 
+                   ifelse(risk_scores$job == "retired", 1, 
+                   ifelse(risk_scores$job == "technician", 3, 
+                   ifelse(risk_scores$job == "services", 3,0)))))))))))
+```
+
 
 
 ## Education
