@@ -1037,6 +1037,42 @@ risk_scores$housing <- ifelse(risk_scores$housing == "yes", 1, 0)
 risk_scores$age <- ifelse(risk_scores$age == "Baby Boomers", 1, ifelse(risk_scores$age == "Gen X", 2, 3))
 ```
 
+## remove unuse columns
+```{r}
+risk_scores$marital <- NULL
+risk_scores$day <- NULL
+risk_scores$month <- NULL
+risk_scores$deposit_date <- NULL
+risk_scores$duration <- NULL
+risk_scores$last_deposit <- NULL
+```
+
+
+## Calculate the risk score for each customers
+
+```{r}
+risk_scores$TotalScore <- risk_scores$age + risk_scores$job + risk_scores$education + risk_scores$housing + risk_scores$loan + risk_scores$deposit + risk_scores$balance 
+```
+
+## set the risk category
+```{r}
+risk_scores$Category <- ifelse(risk_scores$TotalScore <= 8, "Very High",
+                        ifelse(risk_scores$TotalScore <= 12 & risk_scores$TotalScore >= 9, "High", 
+                        ifelse(risk_scores$TotalScore <= 15 & risk_scores$TotalScore >= 13, "Medium", "Low")))
+
+bankn$Category <- ifelse(risk_scores$TotalScore <= 8, "Very High",
+                        ifelse(risk_scores$TotalScore <= 12 & risk_scores$TotalScore >= 9, "High", 
+                        ifelse(risk_scores$TotalScore <= 15 & risk_scores$TotalScore >= 13, "Medium", "Low")))
+```
+
+## Extract the low risk customers
+```{r}
+low_risk <- risk_scores[risk_scores$Category =="Low",] 
+bankn.low_risk <- bankn[bankn$Category =="Low",] 
+COUNT(low_risk$Category)/ COUNT(risk_scores$Category) *100
+summary(low_risk$Category)
+```
+
 
 
 
