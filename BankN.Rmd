@@ -314,29 +314,51 @@ summary(bankn$day)
 ```{r} 
 summary(bankn$month)
 ```
-* Outlier : Since the data set is categorical in nature and using the summary of the month column we can conclude that there are no outliers for this data set None 
+* Data type: Categorical
 
-* the month feature is used to describe the months of the year which the last deposite was made and as a result is a categorical data type
+*  Value Range : "january" to "december"
 
-* Value Range : The possible values that can be taken on by month ranges between "january" to "december"
+* Min : month(s) with lowest frequency 
 
-* Min : This is initially meaningless when used against categorical data but it when used with the summary function , which will returns total number of times the each category appears within the dataset min can be used to determine the lowest number of times a category appears 
+* Max : moth(s) with highest frequency
 
 ## Summary of Data | Month
 
-```{r}
-min(summary(bankn$month))
+```{r , fig.align='center'}
+barplot(prop.table(table(bankn$month)))
 ```
-* Max : This is initially meaningless when used against categorical data but it when used with the summary function , which will returns total number of times the each category appears within the dataset, min can be used to determine the highest number of times a category appears
 
-```{r}
-max(summary(bankn$month))
-```
-missing values : 
+## Summary of Data | Month
 
-```{r}
-sum(is.na(bankn$month))
+```{r, fig.align='center'}
+dates_noise <- bankn[((bankn$month == 'january' & bankn$day > 31) | 
+                        (bankn$month == 'february' & bankn$day > 28) |
+                        (bankn$month == 'march' & bankn$day > 31) |
+                        (bankn$month == 'april' & bankn$day > 30) |
+                        (bankn$month == 'may' & bankn$day > 31) |
+                        (bankn$month == 'june' & bankn$day > 30) |
+                        (bankn$month == 'july' & bankn$day > 31) |
+                        (bankn$month == 'august' & bankn$day > 31) |
+                        (bankn$month == 'september' & bankn$day > 30) |
+                        (bankn$month == 'october' & bankn$day > 31) |
+                        (bankn$month == 'november' & bankn$day > 30) |
+                        (bankn$month == 'december' & bankn$day > 31) 
+                        
+                      ), 8:9]
+
 ```
+
+## Summary of Data | Month
+
+```{r , fig.align='center'}
+print(dates_noise)
+```
+
+* Missing values : None
+
+* Noise: Out of range dates
+
+* outlies: None
 
 ## Summary of Data | Month
 
@@ -346,46 +368,67 @@ onlyFebDates <- bankn[bankn$month=="february" & bankn$day>28,]
 onlyFebDates$day <- onlyFebDates$day-28 
 onlyFebDates$month <- "march"
 bankn[bankn$month=="february" & bankn$day>28,] <- onlyFebDates
+
+# viewing data post fix
 ```
+
+## Summary of Data | Month
+
+```{r}
+dates_noise <- bankn[((bankn$month == 'january' & bankn$day > 31) | 
+                        (bankn$month == 'february' & bankn$day > 28) |
+                        (bankn$month == 'march' & bankn$day > 31) |
+                        (bankn$month == 'april' & bankn$day > 30) |
+                        (bankn$month == 'may' & bankn$day > 31) |
+                        (bankn$month == 'june' & bankn$day > 30) |
+                        (bankn$month == 'july' & bankn$day > 31) |
+                        (bankn$month == 'august' & bankn$day > 31) |
+                        (bankn$month == 'september' & bankn$day > 30) |
+                        (bankn$month == 'october' & bankn$day > 31) |
+                        (bankn$month == 'november' & bankn$day > 30) |
+                        (bankn$month == 'december' & bankn$day > 31) 
+                        
+                      ), 8:9]
+
+```
+
+## Summary of Data | Month
+
+```{r}
+print(dates_noise)
+```
+
 
 ## Summary of Data | Duration
 
 ```{r}
 summary(bankn$duration)
 ```
-- Std. Deviation
+* Std. Deviation
 `r sd(bankn$duration)`
 
-Data Type: Since the Duration data type is a measure of the length of time spent on a call (seconds) then this factor does possess a true Zero placing it as a Ratio Data type 
+* Data Type: ratio
 
-Range of value: the values present range from 2 to 2177 (seconds)
+* Range of value: the values present range from 2 to 2177 (seconds)
+
+* Min : shortest call druation (seconds)
+
+* Max : longest call duration (seconds)
 
 ## Summary of Data | Duration
 
-min: using the "min" function we can find the value with the shortest call duration 
+
 ```{r}
-min(bankn$duration)
+  hist(bankn$duration)
 ```
 
 ## Summary of Data | Duration
 
-max: using the "max" function we can find the value with the longest call duration 
-```{r}
-max(bankn$duration)
-```
-missing values: From the summary of the vector we can see that there are no missing values present in the vector
+* Missing values : None
 
-noise: When looking at the structure of the data set we see that the "duration" factor consists of purely integers
+* Noise:  None
 
-outliers: With the use of a box plot we can see if any outliers exist
-
-## Summary of Data | Duration
-
-```{r}
-boxplot(bankn$duration)
-```
-
-From the result of the box plot we can see there are many outliers but with the nature or the feature in question these outliers can be considered valid data as the length of time a person would be willing to stay on the phone may vary 
+* outlies: yes
 
 
 ## Summary of Data | Deposit
@@ -459,11 +502,16 @@ lines(density(bankn$deposit), lwd = 1, col = "blue")
 summary(bankn$balance, maxsum = 10)
 ```
 
-- Std. Deviation won't work because of characters. Thats why the data type is factor and not numeric
+* Std. Deviation
+`r sd(bankn$duration)`
 
-`r #sd(bankn$balance)`
-- The balance field contains 4 rows with characters instead of numeric 
-  at row 8, 54, 26 and 87. Which causes the field to be interpreted as a factor field.
+* Data Type: interval
+
+* Range of value: -167760 to 10537920
+
+* Min : The account containing the lowest amount 
+
+* Max : The account containing the largest amount 
 
 ## Summary of Data | Balance
 
@@ -476,9 +524,11 @@ bankn$balance[c(8, 54, 26, 87)]
 
 #### Removing noise 
 
-In order to convert the balance feature to a numeric type instead of a factor type we make use of the as.numeric and as.character functions
+* In order to convert the balance feature to a numeric type instead of a factor type we make use of the as.numeric and as.character functions
 ```{r}
 bankn$balance <- as.numeric(as.character(bankn$balance))
+
+summary(bankn$balance)
 ```
 
 ## Summary of Data | Balance
@@ -499,6 +549,19 @@ for(i in 1:nrow(bankn_missing_balance)){
 }
 bankn[is.na(bankn$balance),] = bankn_missing_balance
 ```
+
+## Summary of Data | Balance
+```{r}
+summary(bankn$balance)
+```
+
+
+## Summary of Data | Balance
+```{r}
+hist(bankn$deposit, prob = TRUE, main = "Density of Bank Deposits",ylim=c(0,.0001), xlim=c(0,80000))
+lines(density(bankn$deposit), lwd = 1, col = "blue")
+```
+
 
 ## Summary of Data | Balance
 
