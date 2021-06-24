@@ -85,8 +85,6 @@ bankn <- read.csv("2021-Set03-QualityAssured.csv",
                   header = T, sep = ",", stringsAsFactors = T)
 ```
 
-# Summary of Data 
-
 ## Data Cleaning and Observation | RefNum
 ```{r}
 summary(bankn$RefNum)
@@ -278,6 +276,7 @@ bankn$education[!(bankn$education %in% c('tertiary','secondary','primary'))] <- 
 ```
 
 ```{r}
+bankn$education <- droplevels(bankn$education)
 summary(bankn$education)
 ```
 
@@ -305,7 +304,7 @@ kable(jobs)
 ```
 
 
-## Summary of Data | Housing
+## Data Cleaning and Observation | Housing
 
 ```{r}
 summary(bankn$housing)
@@ -313,7 +312,7 @@ summary(bankn$housing)
 - The housing data is categorical, so no standard values were obtained from it, it simply gave a count of yes or no. There were also no outlier or missing values.
 
 
-## Summary of Data | Loan
+## Data Cleaning and Observation | Loan
 
 - The loan represents whether the person have a personal loan or not.
 - They are categorical measurement
@@ -333,7 +332,7 @@ kable(summary(bankn$loan))
 kable(bankn[bankn$loan == "" , c("age","marital", "education", "housing", "loan")][1:5,], caption = "Table showing 5 Missing loan values" )
 ```
 
-## Summary of Data | Loan
+## Data Cleaning and Observation | Loan
 
 - To fix the missing values they were set to no
 - This was done because there was not enough information to tell if the user had a lone
@@ -361,7 +360,7 @@ summary(bankn$loan)
 ```
 
 
-##  Summary of Data | Contact
+##  Data Cleaning and Observation | Contact
 
 - The contact column was in the data but not the data dictionary 
 - The contact column is empty and has no value. It cannot be used in analysis.
@@ -385,14 +384,14 @@ bankn$contact <- NULL
 ```
 
 
-## Summary of Data | Day
+## Data Cleaning and Observation | Day
 
 ```{r}
 summary(bankn$day)
 ```
 - The standard values obtained from the date were not exactly meaningful, as they do represent ordinal values for the days in a month. However when day was analyzed with the month and potential year of the data set, it was observed that there may be outlier for the month of February where the day was 29. This is possible if the year of the data set was 2019, since that was not a leap year. A definite outlier would have been where the day was 30 for the month of February. 
 
-## Summary of Data | Month
+## Data Cleaning and Observation | Month
 
 ```{r} 
 summary(bankn$month)
@@ -405,7 +404,7 @@ summary(bankn$month)
 
 * Min : This is initially meaningless when used against categorical data but it when used with the summary function , which will returns total number of times the each category appears within the dataset min can be used to determine the lowest number of times a category appears 
 
-## Summary of Data | Month
+## Data Cleaning and Observation | Month
 
 ```{r}
 min(summary(bankn$month))
@@ -421,7 +420,7 @@ missing values :
 sum(is.na(bankn$month))
 ```
 
-## Summary of Data | Month
+## Data Cleaning and Observation | Month
 
 ####  Fixing Errors/Unknown Values
 ```{r}
@@ -431,7 +430,7 @@ onlyFebDates$month <- "march"
 bankn[bankn$month=="february" & bankn$day>28,] <- onlyFebDates
 ```
 
-## Summary of Data | Duration
+## Data Cleaning and Observation | Duration
 
 ```{r}
 summary(bankn$duration)
@@ -443,14 +442,14 @@ Data Type: Since the Duration data type is a measure of the length of time spent
 
 Range of value: the values present range from 2 to 2177 (seconds)
 
-## Summary of Data | Duration
+## Data Cleaning and Observation | Duration
 
 min: using the "min" function we can find the value with the shortest call duration 
 ```{r}
 min(bankn$duration)
 ```
 
-## Summary of Data | Duration
+## Data Cleaning and Observation | Duration
 
 max: using the "max" function we can find the value with the longest call duration 
 ```{r}
@@ -462,7 +461,7 @@ noise: When looking at the structure of the data set we see that the "duration" 
 
 outliers: With the use of a box plot we can see if any outliers exist
 
-## Summary of Data | Duration
+## Data Cleaning and Observation | Duration
 
 ```{r}
 boxplot(bankn$duration)
@@ -471,16 +470,16 @@ boxplot(bankn$duration)
 From the result of the box plot we can see there are many outliers but with the nature or the feature in question these outliers can be considered valid data as the length of time a person would be willing to stay on the phone may vary 
 
 
-## Summary of Data | Deposit
+## Data Cleaning and Observation | Deposit
 
 #### Fixing Missing Values in Deposit. 
 There are 152 missing values missing within the data. In order to fix them, central tendency is used.Specifically, the mean is used because the data is skewed.The missing values will be replaced with the median for individual's who are grouped by the job feature.
 ```{r}
-kable(head(bankn[is.na(bankn$deposit),],n = 5))
+kable(head(bankn[is.na(bankn$deposit),],n = 4))
 ```
 
 
-## Summary of Data | Deposit
+## Data Cleaning and Observation | Deposit
 
 #### Fixing the missing values and noise
 ```{r}
@@ -494,7 +493,7 @@ for (i in 1:nrow(missing_deposits)){
 bankn[is.na(bankn$deposit) | bankn$deposit==0,] <- missing_deposits
 ```
 
-## Summary of Data | Deposit
+## Data Cleaning and Observation | Deposit
 
 ####  Removing outliers
 ```{r}
@@ -508,7 +507,7 @@ bankn$deposit[bankn$deposit < lower_limit] <- lower_limit
 
 ```
 
-## Summary of Data | Deposit
+## Data Cleaning and Observation | Deposit
 The deposit feature stores the amount of money deposited by a customer during their last transaction.A box plot revealed that there are several outliers within this feature. The values are  majority numeric. The measurement type is ratio since there are absolute zeros present. There are also several missing values of type NA.
 
 ----
@@ -522,7 +521,7 @@ hist(bankn$deposit, prob = TRUE, main = "Density of Bank Deposits",ylim=c(0,.000
 lines(density(bankn$deposit), lwd = 1, col = "blue")
 ```
 
-## Summary of Data | Deposit
+## Data Cleaning and Observation | Deposit
 
 ```{r}
 summary(bankn$deposit)
@@ -534,7 +533,7 @@ hist(bankn$deposit, prob = TRUE, main = "Density of Bank Deposits",ylim=c(0,.000
 lines(density(bankn$deposit), lwd = 1, col = "blue")
 ```
 
-## Summary of Data | Balance
+## Data Cleaning and Observation | Balance
 
 ```{r}
 summary(bankn$balance, maxsum = 10)
@@ -546,14 +545,14 @@ summary(bankn$balance, maxsum = 10)
 - The balance field contains 4 rows with characters instead of numeric 
   at row 8, 54, 26 and 87. Which causes the field to be interpreted as a factor field.
 
-## Summary of Data | Balance
+## Data Cleaning and Observation | Balance
 
 ####  Values  
 ```{r echo=TRUE}
 kable(bankn$balance[c(8, 54, 26, 87)])
 ```
 
-## Summary of Data | Balance
+## Data Cleaning and Observation | Balance
 
 #### Removing noise 
 
@@ -562,7 +561,7 @@ In order to convert the balance feature to a numeric type instead of a factor ty
 bankn$balance <- as.numeric(as.character(bankn$balance))
 ```
 
-## Summary of Data | Balance
+## Data Cleaning and Observation | Balance
 
 #### Replacing Errors
 
@@ -581,7 +580,7 @@ for(i in 1:nrow(bankn_missing_balance)){
 bankn[is.na(bankn$balance),] = bankn_missing_balance
 ```
 
-## Summary of Data | Balance
+## Data Cleaning and Observation | Balance
 
 #### Fixing outliers
 
@@ -612,20 +611,23 @@ str(bankn)
 ```
 # Data Transformation | Question 2-6
 
-# Question 2
+# Data Transformation | Convert the duration from the current value in seconds to minutes.
 
-## Question 2 | Convert the duration from the current value in seconds to minutes.
+## Data Transformation | Convert the duration from the current value in seconds to minutes.
 
 #### Before
 ```{r}
 head(bankn$duration, n = 3)
 bankn$duration <- round(bankn$duration/60, digits = 2)
 ```
+## Data Transformation | Convert the duration from the current value in seconds to minutes.
 
 #### After
 ```{r}
-kable(head(bankn$duration, n = 3))
+kable(bankn[1:3,c("RefNum","duration")], n = 3)
 ```
+
+# Data Transformation | Age Discretization
 
 ## Data Transformation | Age Discretization
 
@@ -665,18 +667,13 @@ bankn$age <- age.temp
 
 ## Data Transformation | Age new values
 
-```{r}
-kable(head(bankn$age, n = 5))
-```
-
-
 ```{r, echo=FALSE}
 kable(bankn[, c("age","marital", "education")][1:3,], caption = "Table showing new age values" )
 ```
 
-# Question 4
+# Data Transformation | Normalizing Deposits
 
-## Question 4 | Apply one of the normalization methods discussed to any feature in the dataset. Justify your decision.
+## Data Transformation | Normalizing Deposits
 
 ### Min-Max normalization
 ```{r}
@@ -703,11 +700,11 @@ hist(bankn$deposit, prob = TRUE, main = "Density of Bank Deposits",ylim=c(0,.2),
 lines(density(bankn$deposit), lwd = 1, col = "blue")
 ```
 
-# Question 5
+# Data Transformation | Number of Days Since the Last Deposit
 
-## Question 5 | Construct a new column (variable) called <strong>last_deposit</strong> which records the number of days since the client made a deposit. Use the month and day columns and calculate this value with the current date.
+## Data Transformation | Number of Days Since the Last Deposit
 
-## Question 5 | What was done?
+## Data Transformation | What was done?
 
 1. We converted the day and month fields into Date objects in 2019.
 2. We subtracted those dates from the current date to get the number of days between them.
@@ -718,7 +715,7 @@ kable(head(temp, n=3))
 bankn$last_deposit <- Sys.Date() - temp
 ```
 
-## Question 5 | Result
+## Data Transformation | Number of Days Since the Last Deposit
 
 ```{r}
 kable(head(bankn[c(8,9,13)], n = 5))
@@ -823,8 +820,8 @@ plot.xts(deposits.xts[months(index(deposits.xts)) %in% month.name[1:3]], main = 
 ```{r, fig.align='center', fig.cap="Time Series Showing Deposits in 3rd Quarter of the Year"}
 plot.xts(deposits.xts[months(index(deposits.xts)) %in% month.name[7:9]], main = "", col = "blue", ylim = c(0,50))
 ```
-# Data Analysis | Question 7
 
+# Data Analysis
 
 ## Data Analysis | Which categories of jobs have the highest and lowest average deposits?
 
@@ -855,81 +852,145 @@ job_deposits_chart
 ### - The category with the lowest average deposit is: <strong>`r job.min$job`</strong> at \$`r job.min$avg_deposit`
 
 
-## b. What is the dominant educational level of each category of job?
+# Data Analysis | What is the dominant educational level of each category of job?
+
+## Data Analysis | What is the dominant educational level of each category of job?
 
 Admin: Secondary(136)
 ```{r}
 jobs_admin <- bankn[bankn$job == 'admin.',]
-
-summary(jobs_admin$education)
 ```
+
+----
+
+```{r}
+barplot(prop.table(table(jobs_admin$education)))
+```
+
+## Data Analysis | What is the dominant educational level of each category of job?
+
 blue-collar: secondary(212)
 ```{r}
 jobs_blue_collar <- bankn[bankn$job == 'blue-collar',]
-
-summary(jobs_blue_collar$education)
 ```
+
+----
+
+```{r}
+barplot(prop.table(table(jobs_blue_collar$education)))
+```
+
+## Data Analysis | What is the dominant educational level of each category of job?
+
 entrepreneur: tertiary(17)
 ```{r}
 jobs_entrepreneur <- bankn[bankn$job == 'entrepreneur',]
-
-summary(jobs_entrepreneur$education)
 ```
+
+----
+
+```{r}
+barplot(prop.table(table(jobs_entrepreneur$education)))
+```
+
+## Data Analysis | What is the dominant educational level of each category of job?
+
 housemaid: primary(7)
 ```{r}
 jobs_housemaid <- bankn[bankn$job == 'housemaid',]
-
-summary(jobs_housemaid$education)
 ```
+
+----
+
+```{r}
+barplot(prop.table(table(jobs_housemaid$education)))
+```
+
+## Data Analysis | What is the dominant educational level of each category of job?
 
 management: tertiary(123)
 ```{r}
 jobs_management <- bankn[bankn$job == 'management',]
-
-summary(jobs_management$education)
 ```
+
+----
+
+```{r}
+barplot(prop.table(table(jobs_management$education)))
+```
+
+## Data Analysis | What is the dominant educational level of each category of job?
 
 retired: secondary(28)
 ```{r}
 jobs_retired <- bankn[bankn$job == 'retired',]
-
-summary(jobs_retired$education)
 ```
+
+----
+
+```{r}
+barplot(prop.table(table(jobs_retired$education)))
+```
+
+## Data Analysis | What is the dominant educational level of each category of job?
 
 self-employed: tertiary(14)
 ```{r}
 jobs_self_employed <- bankn[bankn$job == 'self-employed',]
-
-summary(jobs_self_employed$education)
 ```
+
+----
+
+```{r}
+barplot(prop.table(table(jobs_self_employed$education)))
+```
+
+## Data Analysis | What is the dominant educational level of each category of job?
 
 services: secondary(124)
 ```{r}
 jobs_services <- bankn[bankn$job == 'services',]
-
-summary(jobs_services$education)
 ```
+
+----
+
+```{r}
+barplot(prop.table(table(jobs_services$education)))
+```
+
+## Data Analysis | What is the dominant educational level of each category of job?
 
 technician: secondary(127)
 ```{r}
 jobs_technician <- bankn[bankn$job == 'technician',]
-
-summary(jobs_technician$education)
 ```
+
+----
+
+```{r}
+barplot(prop.table(table(jobs_technician$education)))
+```
+
+## Data Analysis | What is the dominant educational level of each category of job?
 
 unemployed: secondary(15)
 ```{r}
 jobs_unemployed <- bankn[bankn$job == 'unemployed',]
-
-summary(jobs_unemployed$education)
 ```
+
+----
+
+```{r}
+barplot(prop.table(table(jobs_unemployed$education)))
+```
+
+# Data Anlysis | Morgage and personal loan percentage 
 
 ## Data Anlysis | Morgage and personal loan percentage 
 
 ```{r}
 mortgage_and_loan <- bankn[,c("housing", "loan")]
 mortgage_and_loan.percent <- COUNT(mortgage_and_loan[mortgage_and_loan$housing == "yes" & mortgage_and_loan$loan == "yes",])/ COUNT(mortgage_and_loan$housing) *100
-
 ```
 
 - The percentage of persons who have both mortgage and personal loan is `r round(mortgage_and_loan.percent, digits = 2)`%.
@@ -937,7 +998,7 @@ mortgage_and_loan.percent <- COUNT(mortgage_and_loan[mortgage_and_loan$housing =
 
 --- 
 
-
+# Data Analysis | Which age-group has the highest average balance?
 
 ## Data Analysis | Which age-group has the highest average balance?
 
