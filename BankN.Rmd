@@ -184,7 +184,7 @@ bankn[!(bankn$job %in% c("admin.", "unemployed", "management","housemaid", "entr
 
 #### Record with Educational Level but Missing Job (After)
 ```{r}
-bankn[bankn$RefNum == refnum,]
+kable(bankn[bankn$RefNum == refnum,])
 ```
 
 ## Data Cleaning and Observation | Education
@@ -301,7 +301,7 @@ rownames(jobs) <- c("admin.", "unemployed", "management","housemaid", "entrepren
 
 #### Jobs with Educational Level
 ```{r}
-jobs
+kable(jobs)
 ```
 
 
@@ -449,11 +449,9 @@ From the result of the box plot we can see there are many outliers but with the 
 #### Fixing Missing Values in Deposit. 
 There are 152 missing values missing within the data. In order to fix them, central tendency is used.Specifically, the mean is used because the data is skewed.The missing values will be replaced with the median for individual's who are grouped by the job feature.
 ```{r}
-head(bankn[is.na(bankn$deposit),],n = 10)
+kable(head(bankn[is.na(bankn$deposit),],n = 5))
 ```
-```{r}
-bankn[(bankn$deposit==0),]
-```
+
 
 ## Summary of Data | Deposit
 
@@ -525,7 +523,7 @@ summary(bankn$balance, maxsum = 10)
 
 ####  Values  
 ```{r echo=TRUE}
-bankn$balance[c(8, 54, 26, 87)]
+kable(bankn$balance[c(8, 54, 26, 87)])
 ```
 
 ## Summary of Data | Balance
@@ -599,7 +597,7 @@ bankn$duration <- round(bankn$duration/60, digits = 2)
 
 #### After
 ```{r}
-head(bankn$duration, n = 3)
+kable(head(bankn$duration, n = 3))
 ```
 
 # Question 3
@@ -647,7 +645,7 @@ bankn$age <- age.temp
 ## Discretization | New Values
 
 ```{r}
-head(bankn$age, n = 5)
+kable(head(bankn$age, n = 5))
 ```
 
 # Question 4
@@ -699,7 +697,7 @@ bankn$last_deposit <- Sys.Date() - temp
 ## Question 5 | Result
 
 ```{r}
-head(bankn[c(8,9,13)], n = 5)
+kable(head(bankn[c(8,9,13)], n = 5))
 ```
 
 # Comparison using Time Series
