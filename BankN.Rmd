@@ -396,38 +396,90 @@ summary(bankn$day)
 ```{r} 
 summary(bankn$month)
 ```
-* Outlier : Since the data set is categorical in nature and using the summary of the month column we can conclude that there are no outliers for this data set None 
+* Data type: Categorical
 
-* the month feature is used to describe the months of the year which the last deposite was made and as a result is a categorical data type
+* Value Range : "january" to "december"
 
-* Value Range : The possible values that can be taken on by month ranges between "january" to "december"
+* Min : month(s) with lowest frequency 
 
-* Min : This is initially meaningless when used against categorical data but it when used with the summary function , which will returns total number of times the each category appears within the dataset min can be used to determine the lowest number of times a category appears 
+* Max : moth(s) with highest frequency
 
 ## Data Cleaning and Observation | Month
 
-```{r}
-min(summary(bankn$month))
-```
-* Max : This is initially meaningless when used against categorical data but it when used with the summary function , which will returns total number of times the each category appears within the dataset, min can be used to determine the highest number of times a category appears
-
-```{r}
-max(summary(bankn$month))
-```
-missing values : 
-
-```{r}
-sum(is.na(bankn$month))
+```{r , fig.align='center'}
+barplot(prop.table(table(bankn$month)))
 ```
 
 ## Data Cleaning and Observation | Month
 
-####  Fixing Errors/Unknown Values
+```{r, fig.align='center'}
+dates_noise <- bankn[((bankn$month == 'january' & bankn$day > 31) | 
+                        (bankn$month == 'february' & bankn$day > 28) |
+                        (bankn$month == 'march' & bankn$day > 31) |
+                        (bankn$month == 'april' & bankn$day > 30) |
+                        (bankn$month == 'may' & bankn$day > 31) |
+                        (bankn$month == 'june' & bankn$day > 30) |
+                        (bankn$month == 'july' & bankn$day > 31) |
+                        (bankn$month == 'august' & bankn$day > 31) |
+                        (bankn$month == 'september' & bankn$day > 30) |
+                        (bankn$month == 'october' & bankn$day > 31) |
+                        (bankn$month == 'november' & bankn$day > 30) |
+                        (bankn$month == 'december' & bankn$day > 31) 
+                        
+                      ), 8:9]
+
+```
+
+## Data Cleaning and Observation | Month
+
+```{r , fig.align='center'}
+print(dates_noise)
+```
+
+## Data Cleaning and Observation | Month
+
+* Missing values : None
+
+* Noise: Out of range dates
+
+* outlies: None
+
+####  Fixing Errors/Unknown Values | DAY & MONTH
 ```{r}
 onlyFebDates <- bankn[bankn$month=="february" & bankn$day>28,]
 onlyFebDates$day <- onlyFebDates$day-28 
 onlyFebDates$month <- "march"
 bankn[bankn$month=="february" & bankn$day>28,] <- onlyFebDates
+
+# viewing data post fix
+```
+
+## Data Cleaning and Observation | Duration
+
+
+```{r}
+dates_noise <- bankn[((bankn$month == 'january' & bankn$day > 31) | 
+                        (bankn$month == 'february' & bankn$day > 28) |
+                        (bankn$month == 'march' & bankn$day > 31) |
+                        (bankn$month == 'april' & bankn$day > 30) |
+                        (bankn$month == 'may' & bankn$day > 31) |
+                        (bankn$month == 'june' & bankn$day > 30) |
+                        (bankn$month == 'july' & bankn$day > 31) |
+                        (bankn$month == 'august' & bankn$day > 31) |
+                        (bankn$month == 'september' & bankn$day > 30) |
+                        (bankn$month == 'october' & bankn$day > 31) |
+                        (bankn$month == 'november' & bankn$day > 30) |
+                        (bankn$month == 'december' & bankn$day > 31) 
+                        
+                      ), 8:9]
+
+```
+
+## Data Cleaning and Observation | Duration
+
+
+```{r}
+print(dates_noise)
 ```
 
 ## Data Cleaning and Observation | Duration
@@ -435,45 +487,59 @@ bankn[bankn$month=="february" & bankn$day>28,] <- onlyFebDates
 ```{r}
 summary(bankn$duration)
 ```
-- Std. Deviation
+* Std. Deviation
 `r sd(bankn$duration)`
 
-Data Type: Since the Duration data type is a measure of the length of time spent on a call (seconds) then this factor does possess a true Zero placing it as a Ratio Data type 
+* Data Type: ratio
 
-Range of value: the values present range from 2 to 2177 (seconds)
+* Range of value: the values present range from 2 to 2177 (seconds)
 
-## Data Cleaning and Observation | Duration
+* Min : shortest call druation (seconds)
 
-min: using the "min" function we can find the value with the shortest call duration 
-```{r}
-min(bankn$duration)
-```
+* Max : longest call duration (seconds)
 
 ## Data Cleaning and Observation | Duration
 
-max: using the "max" function we can find the value with the longest call duration 
-```{r}
-max(bankn$duration)
-```
-missing values: From the summary of the vector we can see that there are no missing values present in the vector
-
-noise: When looking at the structure of the data set we see that the "duration" factor consists of purely integers
-
-outliers: With the use of a box plot we can see if any outliers exist
-
-## Data Cleaning and Observation | Duration
 
 ```{r}
-boxplot(bankn$duration)
+  hist(bankn$duration)
 ```
 
-From the result of the box plot we can see there are many outliers but with the nature or the feature in question these outliers can be considered valid data as the length of time a person would be willing to stay on the phone may vary 
+## Summary of Data | Duration
 
+* Missing values : None
+
+* Noise:  None
+
+* outlies: yes
 
 ## Data Cleaning and Observation | Deposit
 
-#### Fixing Missing Values in Deposit. 
-There are 152 missing values missing within the data. In order to fix them, central tendency is used.Specifically, the mean is used because the data is skewed.The missing values will be replaced with the median for individual's who are grouped by the job feature.
+- Deposit feature stores the amount of money deposited by a customer during their last transaction.
+
+- Doing a summary of deposit reveals:
+  - values range from 0 to 44257o- 25% of the values  are between 0 - 1415(first quartile)
+  - the median value is 8817
+  - the mean is 16220
+  - 75% of the values are between 0-119169 (third quartile)
+  - the max is 442570
+  - there are 152 missing values
+----
+```{r}
+summary(bankn$deposit)
+```
+## Data Cleaning and Observation | Deposit
+
+#### Fixing Missing Values and Zeros in Deposit. 
+
+- In order to fix them, central tendency is used.
+- Missing values are replaced with the mean of deposit.
+- The mean is used because the data is skewed.
+----
+```{r}
+bankn[is.na(bankn$deposit),]
+``` 
+----
 ```{r}
 kable(head(bankn[is.na(bankn$deposit),],n = 4))
 ```
@@ -481,9 +547,14 @@ kable(head(bankn[is.na(bankn$deposit),],n = 4))
 
 ## Data Cleaning and Observation | Deposit
 
-#### Fixing the missing values and noise
+#### Fixing  noise : Missing Values and Zeros in Deposit. 
+
+- Individuals were grouped by their jobs.
+- Missing values and zeros within each category were replaced with the mean of that category.
+
 ```{r}
 median_list <- aggregate(bankn$deposit, by=list(bankn$job), FUN=median, na.rm = TRUE)
+print(median_list)
 
 missing_deposits <- bankn[is.na(bankn$deposit) | bankn$deposit==0,]
 
@@ -494,6 +565,16 @@ bankn[is.na(bankn$deposit) | bankn$deposit==0,] <- missing_deposits
 ```
 
 ## Data Cleaning and Observation | Deposit
+
+#### Fixing the missing values and noise
+
+- Doing summary reveals there are that all missing values and zeros have been replaced.
+
+```{r}
+summary(bankn$deposit)
+```
+
+## Summary of Data | Deposit
 
 ####  Removing outliers
 ```{r}
@@ -514,7 +595,6 @@ The deposit feature stores the amount of money deposited by a customer during th
 ```{r, fig.align='center', fig.cap='Boxplot of Deposits'}
 boxplot(bankn$deposit)
 ```
-
 ----
 ```{r, fig.align='center', fig.cap='Density Plot of Deposits'}
 hist(bankn$deposit, prob = TRUE, main = "Density of Bank Deposits",ylim=c(0,.0001), xlim=c(0,80000))
@@ -539,11 +619,16 @@ lines(density(bankn$deposit), lwd = 1, col = "blue")
 summary(bankn$balance, maxsum = 10)
 ```
 
-- Std. Deviation won't work because of characters. Thats why the data type is factor and not numeric
+* Std. Deviation
+`r sd(bankn$duration)`
 
-`r #sd(bankn$balance)`
-- The balance field contains 4 rows with characters instead of numeric 
-  at row 8, 54, 26 and 87. Which causes the field to be interpreted as a factor field.
+* Data Type: interval
+
+* Range of value: -167760 to 10537920
+
+* Min : The account containing the lowest amount 
+
+* Max : The account containing the largest amount 
 
 ## Data Cleaning and Observation | Balance
 
@@ -556,9 +641,11 @@ kable(bankn$balance[c(8, 54, 26, 87)])
 
 #### Removing noise 
 
-In order to convert the balance feature to a numeric type instead of a factor type we make use of the as.numeric and as.character functions
+* In order to convert the balance feature to a numeric type instead of a factor type we make use of the as.numeric and as.character functions
 ```{r}
 bankn$balance <- as.numeric(as.character(bankn$balance))
+
+summary(bankn$balance)
 ```
 
 ## Data Cleaning and Observation | Balance
@@ -581,6 +668,21 @@ bankn[is.na(bankn$balance),] = bankn_missing_balance
 ```
 
 ## Data Cleaning and Observation | Balance
+
+```{r}
+summary(bankn$balance)
+```
+
+
+## Summary of Data | Balance
+```{r}
+hist(bankn$deposit, prob = TRUE, main = "Density of Bank Deposits",ylim=c(0,.0001), xlim=c(0,80000))
+lines(density(bankn$deposit), lwd = 1, col = "blue")
+```
+
+
+## Summary of Data | Balance
+>>>>>>> f79ceb213d0c0876c8c546628a21f2e9b42d2a45
 
 #### Fixing outliers
 
@@ -856,7 +958,7 @@ job_deposits_chart
 
 ## Data Analysis | What is the dominant educational level of each category of job?
 
-Admin: Secondary(136)
+* Admin: Secondary(136)
 ```{r}
 jobs_admin <- bankn[bankn$job == 'admin.',]
 ```
@@ -1039,6 +1141,7 @@ barplot(prop.table(table(bankn$age)))
 ```{r}
  cor.test(bankn$deposit,bankn$balance, alternative = 'greater')
 ```
+## e. Is there a correlation between deposit and balance? Discuss the findings. Explain the implications.
 
 * Out correlation test was performed a a right tailed test with our null hypothesis stating that the 2 features have a correlation value of 0, representation that neither features affect each other in any way 
 
@@ -1300,6 +1403,8 @@ COUNT(low_risk$Category)/ COUNT(risk_scores$Category) *100
 ```{r}
 summary(low_risk$Category)
 ```
+
+
 
 
 
