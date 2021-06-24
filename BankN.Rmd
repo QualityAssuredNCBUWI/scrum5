@@ -390,20 +390,45 @@ From the result of the box plot we can see there are many outliers but with the 
 
 ## Summary of Data | Deposit
 
-#### Fixing Missing Values in Deposit. 
-There are 152 missing values missing within the data. In order to fix them, central tendency is used.Specifically, the mean is used because the data is skewed.The missing values will be replaced with the median for individual's who are grouped by the job feature.
+- Deposit feature stores the amount of money deposited by a customer during their last transaction.
+
+- Doing a summary of deposit reveals:
+  - values range from 0 to 44257o- 25% of the values  are between 0 - 1415(first quartile)
+  - the median value is 8817
+  - the mean is 16220
+  - 75% of the values are between 0-119169 (third quartile)
+  - the max is 442570
+  - there are 152 missing values
+----
 ```{r}
-head(bankn[is.na(bankn$deposit),],n = 10)
+summary(bankn$deposit)
 ```
+## Summary of Data | Deposit
+
+#### Fixing Missing Values and Zeros in Deposit. 
+
+- In order to fix them, central tendency is used.
+- Missing values are replaced with the mean of deposit.
+- The mean is used because the data is skewed.
+----
+```{r}
+bankn[is.na(bankn$deposit),]
+``` 
+----
 ```{r}
 bankn[(bankn$deposit==0),]
 ```
 
 ## Summary of Data | Deposit
 
-#### Fixing the missing values and noise
+#### Fixing  noise : Missing Values and Zeros in Deposit. 
+
+- Individuals were grouped by their jobs.
+- Missing values and zeros within each category were replaced with the mean of that category.
+
 ```{r}
 median_list <- aggregate(bankn$deposit, by=list(bankn$job), FUN=median, na.rm = TRUE)
+print(median_list)
 
 missing_deposits <- bankn[is.na(bankn$deposit) | bankn$deposit==0,]
 
@@ -411,6 +436,16 @@ for (i in 1:nrow(missing_deposits)){
   missing_deposits[i,'deposit'] <- median_list[median_list$Group.1 == (missing_deposits[i,'job']),'x']
 }
 bankn[is.na(bankn$deposit) | bankn$deposit==0,] <- missing_deposits
+```
+
+## Summary of Data | Deposit
+
+#### Fixing the missing values and noise
+
+- Doing summary reveals there are that all missing values and zeros have been replaced.
+
+```{r}
+summary(bankn$deposit)
 ```
 
 ## Summary of Data | Deposit
@@ -427,15 +462,11 @@ bankn$deposit[bankn$deposit < lower_limit] <- lower_limit
 
 ```
 
-## Summary of Data | Deposit
-The deposit feature stores the amount of money deposited by a customer during their last transaction.A box plot revealed that there are several outliers within this feature. The values are  majority numeric. The measurement type is ratio since there are absolute zeros present. There are also several missing values of type NA.
 
-----
 ```{r, fig.align='center', fig.cap='Boxplot of Deposits'}
 boxplot(bankn$deposit)
 ```
 
-----
 ```{r, fig.align='center', fig.cap='Density Plot of Deposits'}
 hist(bankn$deposit, prob = TRUE, main = "Density of Bank Deposits",ylim=c(0,.0001), xlim=c(0,80000))
 lines(density(bankn$deposit), lwd = 1, col = "blue")
