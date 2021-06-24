@@ -993,7 +993,7 @@ fourth <- bankn[bankn$month %in% c('october','november','december'),]
 
 ```{r}
 risk_scores <- bankn[,]
-risk_scores$age <- ifelse(risk_scores$age == "primary", 1, ifelse(risk_scores$age == "secondary", 2, 3))
+risk_scores$age <- ifelse(risk_scores$age == "Baby Boomers", 1, ifelse(risk_scores$age == "Gen X", 2, 3))
 ```
 
 
