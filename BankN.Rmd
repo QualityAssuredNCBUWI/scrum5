@@ -312,45 +312,72 @@ summary(bankn$housing)
 ```
 - The housing data is categorical, so no standard values were obtained from it, it simply gave a count of yes or no. There were also no outlier or missing values.
 
+
 ## Summary of Data | Loan
 
-- Does this person have a personal loan?
+- The loan represents whether the person have a personal loan or not.
+- They are categorical measurement
+- It was found that 15 if the loan values were missing 
+- All the other value were correct with yes and no 
+-  "",  "yes",  "no"
+- `r summary(bankn$loan)` 
+
 ```{r}
-summary(bankn$loan)
-levels(bankn$loan)
+kable(summary(bankn$loan))
+```
+
+----
+
+
+```{r, echo=FALSE}
+kable(bankn[bankn$loan == "" , c("age","marital", "education", "housing", "loan")][1:5,], caption = "Table showing 5 Missing loan values" )
 ```
 
 ## Summary of Data | Loan
 
-- The loan data is representing a Boolean if the user has a loan or not
-- It is represented as categorical measurement with values "yes" or "no"
-- There are 15 missing values that are read as a blank field in the dataframe.
-- This data column has good data as 1103 of the field data value is filled
+- To fix the missing values they were set to no
+- This was done because there was not enough information to tell if the user had a lone
+- In addition, a loan is a big responsibility to give someone
 
-## Summary of Data | Loan
+- It was fixed below
+```{r}
+bankn[bankn$loan == "", "loan"] <- "no"
+```
 
-The loan categorical measurement have 15 missing values. These missing values 
+[comment]: <> ( The loan categorical measurement have 15 missing values. These missing values 
 can be removed or it can be replaced. The option to replace the values were 
 considered. 
 Normally, to get a loan the applicants, job, finances, age, credit  and other loans are normally considered in a financial institution. However, the dataset shows the value for loans being empty. The option to use the jobs, age, education
 and mortgage was considered to decide if a user has a loan or not. However, although a model can dictate the possibility of someone being given a loan. It is
 not 100% correct that the person had a loan.Therefore, to solve the issue the
 empty values for the loans were set to no. It was assumed that an empty value 
-is a representation of the user being skipped due to them not having a loan. 
+is a representation of the user being skipped due to them not having a loan. )
 
+----
 
-- The spaces set to "no"
+- The missing values are now removed 
 ```{r}
-bankn[bankn$loan == "", "loan"] <- "no"
+summary(bankn$loan)
 ```
 
 
-## Summary of Data | Contact
+##  Summary of Data | Contact
+
+- The contact column was in the data but not the data dictionary 
+- The contact column is empty and has no value. It cannot be used in analysis.
+- The column would be removed as it would not be used.
+
 ```{r}
 summary(bankn$contact)
 ```
-- The contact column is empty and has no value. It cannot be used in analysis.
-- The column would be removed as it would not be used.
+
+----
+
+```{r, echo=FALSE}
+kable(bankn[, c("marital", "education", "housing", "loan", "contact")][1:3,], caption = "Table showing empty contact column" )
+```
+
+...
 
 - contacts column removal
 ```{r}
@@ -370,78 +397,121 @@ summary(bankn$day)
 ```{r} 
 summary(bankn$month)
 ```
-* Outlier : Since the data set is categorical in nature and using the summary of the month column we can conclude that there are no outliers for this data set None 
+* Data type: Categorical
 
-* the month feature is used to describe the months of the year which the last deposite was made and as a result is a categorical data type
+* Value Range : "january" to "december"
 
-* Value Range : The possible values that can be taken on by month ranges between "january" to "december"
+* Min : month(s) with lowest frequency 
 
-* Min : This is initially meaningless when used against categorical data but it when used with the summary function , which will returns total number of times the each category appears within the dataset min can be used to determine the lowest number of times a category appears 
+* Max : moth(s) with highest frequency
 
 ## Summary of Data | Month
 
-```{r}
-min(summary(bankn$month))
-```
-* Max : This is initially meaningless when used against categorical data but it when used with the summary function , which will returns total number of times the each category appears within the dataset, min can be used to determine the highest number of times a category appears
-
-```{r}
-max(summary(bankn$month))
-```
-missing values : 
-
-```{r}
-sum(is.na(bankn$month))
+```{r , fig.align='center'}
+barplot(prop.table(table(bankn$month)))
 ```
 
 ## Summary of Data | Month
 
-####  Fixing Errors/Unknown Values
+```{r, fig.align='center'}
+dates_noise <- bankn[((bankn$month == 'january' & bankn$day > 31) | 
+                        (bankn$month == 'february' & bankn$day > 28) |
+                        (bankn$month == 'march' & bankn$day > 31) |
+                        (bankn$month == 'april' & bankn$day > 30) |
+                        (bankn$month == 'may' & bankn$day > 31) |
+                        (bankn$month == 'june' & bankn$day > 30) |
+                        (bankn$month == 'july' & bankn$day > 31) |
+                        (bankn$month == 'august' & bankn$day > 31) |
+                        (bankn$month == 'september' & bankn$day > 30) |
+                        (bankn$month == 'october' & bankn$day > 31) |
+                        (bankn$month == 'november' & bankn$day > 30) |
+                        (bankn$month == 'december' & bankn$day > 31) 
+                        
+                      ), 8:9]
+
+```
+
+## Summary of Data | Month
+
+```{r , fig.align='center'}
+print(dates_noise)
+```
+
+* Missing values : None
+
+* Noise: Out of range dates
+
+* outlies: None
+
+## Summary of Data | Month
+
+####  Fixing Errors/Unknown Values | DAY & MONTH
 ```{r}
 onlyFebDates <- bankn[bankn$month=="february" & bankn$day>28,]
 onlyFebDates$day <- onlyFebDates$day-28 
 onlyFebDates$month <- "march"
 bankn[bankn$month=="february" & bankn$day>28,] <- onlyFebDates
+
+# viewing data post fix
 ```
+
+## Summary of Data | Month
+
+```{r}
+dates_noise <- bankn[((bankn$month == 'january' & bankn$day > 31) | 
+                        (bankn$month == 'february' & bankn$day > 28) |
+                        (bankn$month == 'march' & bankn$day > 31) |
+                        (bankn$month == 'april' & bankn$day > 30) |
+                        (bankn$month == 'may' & bankn$day > 31) |
+                        (bankn$month == 'june' & bankn$day > 30) |
+                        (bankn$month == 'july' & bankn$day > 31) |
+                        (bankn$month == 'august' & bankn$day > 31) |
+                        (bankn$month == 'september' & bankn$day > 30) |
+                        (bankn$month == 'october' & bankn$day > 31) |
+                        (bankn$month == 'november' & bankn$day > 30) |
+                        (bankn$month == 'december' & bankn$day > 31) 
+                        
+                      ), 8:9]
+
+```
+
+## Summary of Data | Month
+
+```{r}
+print(dates_noise)
+```
+
 
 ## Summary of Data | Duration
 
 ```{r}
 summary(bankn$duration)
 ```
-- Std. Deviation
+* Std. Deviation
 `r sd(bankn$duration)`
 
-Data Type: Since the Duration data type is a measure of the length of time spent on a call (seconds) then this factor does possess a true Zero placing it as a Ratio Data type 
+* Data Type: ratio
 
-Range of value: the values present range from 2 to 2177 (seconds)
+* Range of value: the values present range from 2 to 2177 (seconds)
+
+* Min : shortest call druation (seconds)
+
+* Max : longest call duration (seconds)
 
 ## Summary of Data | Duration
 
-min: using the "min" function we can find the value with the shortest call duration 
+
 ```{r}
-min(bankn$duration)
+  hist(bankn$duration)
 ```
 
 ## Summary of Data | Duration
 
-max: using the "max" function we can find the value with the longest call duration 
-```{r}
-max(bankn$duration)
-```
-missing values: From the summary of the vector we can see that there are no missing values present in the vector
+* Missing values : None
 
-noise: When looking at the structure of the data set we see that the "duration" factor consists of purely integers
+* Noise:  None
 
-outliers: With the use of a box plot we can see if any outliers exist
-
-## Summary of Data | Duration
-
-```{r}
-boxplot(bankn$duration)
-```
-
-From the result of the box plot we can see there are many outliers but with the nature or the feature in question these outliers can be considered valid data as the length of time a person would be willing to stay on the phone may vary 
+* outlies: yes
 
 
 ## Summary of Data | Deposit
@@ -551,11 +621,16 @@ lines(density(bankn$deposit), lwd = 1, col = "blue")
 summary(bankn$balance, maxsum = 10)
 ```
 
-- Std. Deviation won't work because of characters. Thats why the data type is factor and not numeric
+* Std. Deviation
+`r sd(bankn$duration)`
 
-`r #sd(bankn$balance)`
-- The balance field contains 4 rows with characters instead of numeric 
-  at row 8, 54, 26 and 87. Which causes the field to be interpreted as a factor field.
+* Data Type: interval
+
+* Range of value: -167760 to 10537920
+
+* Min : The account containing the lowest amount 
+
+* Max : The account containing the largest amount 
 
 ## Summary of Data | Balance
 
@@ -568,9 +643,11 @@ kable(bankn$balance[c(8, 54, 26, 87)])
 
 #### Removing noise 
 
-In order to convert the balance feature to a numeric type instead of a factor type we make use of the as.numeric and as.character functions
+* In order to convert the balance feature to a numeric type instead of a factor type we make use of the as.numeric and as.character functions
 ```{r}
 bankn$balance <- as.numeric(as.character(bankn$balance))
+
+summary(bankn$balance)
 ```
 
 ## Summary of Data | Balance
@@ -591,6 +668,19 @@ for(i in 1:nrow(bankn_missing_balance)){
 }
 bankn[is.na(bankn$balance),] = bankn_missing_balance
 ```
+
+## Summary of Data | Balance
+```{r}
+summary(bankn$balance)
+```
+
+
+## Summary of Data | Balance
+```{r}
+hist(bankn$deposit, prob = TRUE, main = "Density of Bank Deposits",ylim=c(0,.0001), xlim=c(0,80000))
+lines(density(bankn$deposit), lwd = 1, col = "blue")
+```
+
 
 ## Summary of Data | Balance
 
@@ -638,21 +728,7 @@ bankn$duration <- round(bankn$duration/60, digits = 2)
 kable(head(bankn$duration, n = 3))
 ```
 
-# Question 3
-
-
-## Question 3 | Apply one of the binning methods discussed to discretize age. Justify your selection and apply the changes to make age a categorical variable (factor in R).
-
-----
-
-```{r, fig.cap="Distribution of Ages", fig.align='center'}
-hist(bankn$age, col="lightgreen", col.lab="darkgrey",
-     col.axis="darkgrey", xlab = "Age", main="")
-```
-
-## Discretization Method | Generation Groups
-
-### Justification
+## Data Transformation | Age Discretization
 
 1. Ages do not contain outliers.
 
@@ -662,8 +738,16 @@ hist(bankn$age, col="lightgreen", col.lab="darkgrey",
 
 4. Standard Discretization methods would not offer as much insights as this method.
 
-## Categories Selected
+--- 
 
+```{r, fig.cap="Distribution of Ages", fig.align='center', echo=FALSE}
+hist(bankn$age, col="lightgreen", col.lab="darkgrey",
+     col.axis="darkgrey", xlab = "Age", main="")
+```
+
+## Discretization Method | Generation Groups
+
+##### Categories Selected
 - Generation Z (1996 – 2015, age <=25)
 - Millennial (1977 – 1995, age 26 <=44)
 - Generation X (1965 – 1976, age 45 <= 56)
@@ -680,10 +764,15 @@ age.temp <- cut(bankn$age, breaks = c(age.min - 1, 25, 44, 56, age.max),
 bankn$age <- age.temp
 ```
 
-## Discretization | New Values
+## Data Transformation | Age new values
 
 ```{r}
 kable(head(bankn$age, n = 5))
+```
+
+
+```{r, echo=FALSE}
+kable(bankn[, c("age","marital", "education")][1:3,], caption = "Table showing new age values" )
 ```
 
 # Question 4
@@ -721,14 +810,12 @@ lines(density(bankn$deposit), lwd = 1, col = "blue")
 
 ## Question 5 | What was done?
 
-1. We converted the day and month fields into Date objects.
-2. We noticed that there were dates in the future.
-3. We set back dates in the future by one year.
-4. Subtracted those dates from the current date to get the number of days between them.
+1. We converted the day and month fields into Date objects in 2019.
+2. We subtracted those dates from the current date to get the number of days between them.
 
 ```{r}
 temp <- as.Date(paste(bankn$day,bankn$month,"2019",sep = " "), format = "%d %B %Y")
-head(temp)
+kable(head(temp, n=3))
 bankn$last_deposit <- Sys.Date() - temp
 ```
 
@@ -871,81 +958,86 @@ job_deposits_chart
 
 ## b. What is the dominant educational level of each category of job?
 
-Admin: Secondary(136)
+* Admin: Secondary(136)
 ```{r}
 jobs_admin <- bankn[bankn$job == 'admin.',]
-
 summary(jobs_admin$education)
 ```
-blue-collar: secondary(212)
+* blue-collar: secondary(212)
 ```{r}
 jobs_blue_collar <- bankn[bankn$job == 'blue-collar',]
-
 summary(jobs_blue_collar$education)
 ```
-entrepreneur: tertiary(17)
+
+## b. What is the dominant educational level of each category of job?
+
+* entrepreneur: tertiary(17)
 ```{r}
 jobs_entrepreneur <- bankn[bankn$job == 'entrepreneur',]
-
 summary(jobs_entrepreneur$education)
 ```
-housemaid: primary(7)
+
+* housemaid: primary(7)
 ```{r}
 jobs_housemaid <- bankn[bankn$job == 'housemaid',]
-
 summary(jobs_housemaid$education)
 ```
 
-management: tertiary(123)
+## b. What is the dominant educational level of each category of job?
+
+* management: tertiary(123)
 ```{r}
 jobs_management <- bankn[bankn$job == 'management',]
-
 summary(jobs_management$education)
 ```
 
-retired: secondary(28)
+* retired: secondary(28)
 ```{r}
 jobs_retired <- bankn[bankn$job == 'retired',]
-
 summary(jobs_retired$education)
 ```
 
-self-employed: tertiary(14)
+## b. What is the dominant educational level of each category of job?
+
+* self-employed: tertiary(14)
 ```{r}
 jobs_self_employed <- bankn[bankn$job == 'self-employed',]
-
 summary(jobs_self_employed$education)
 ```
 
-services: secondary(124)
+* services: secondary(124)
 ```{r}
 jobs_services <- bankn[bankn$job == 'services',]
-
 summary(jobs_services$education)
 ```
 
-technician: secondary(127)
+## b. What is the dominant educational level of each category of job?
+
+* technician: secondary(127)
 ```{r}
 jobs_technician <- bankn[bankn$job == 'technician',]
-
 summary(jobs_technician$education)
 ```
 
-unemployed: secondary(15)
+* unemployed: secondary(15)
 ```{r}
 jobs_unemployed <- bankn[bankn$job == 'unemployed',]
-
 summary(jobs_unemployed$education)
 ```
 
-## c. What percentage of persons have both mortgage and personal loan?
+## Data Anlysis | Morgage and personal loan percentage 
+
 ```{r}
 mortgage_and_loan <- bankn[,c("housing", "loan")]
 mortgage_and_loan.percent <- COUNT(mortgage_and_loan[mortgage_and_loan$housing == "yes" & mortgage_and_loan$loan == "yes",])/ COUNT(mortgage_and_loan$housing) *100
 
 ```
 
-- The percentage of persons who have both mortgage and personal loan is `r mortgage_and_loan.percent`%. 
+- The percentage of persons who have both mortgage and personal loan is `r round(mortgage_and_loan.percent, digits = 2)`%.
+- This is `r COUNT(mortgage_and_loan[mortgage_and_loan$housing == "yes" & mortgage_and_loan$loan == "yes",])` of `r COUNT(mortgage_and_loan$housing)`` 
+
+--- 
+
 
 
 ## Data Analysis | Which age-group has the highest average balance?
@@ -987,6 +1079,7 @@ barplot(prop.table(table(bankn$age)))
 ```{r}
  cor.test(bankn$deposit,bankn$balance, alternative = 'greater')
 ```
+## e. Is there a correlation between deposit and balance? Discuss the findings. Explain the implications.
 
 * Out correlation test was performed a a right tailed test with our null hypothesis stating that the 2 features have a correlation value of 0, representation that neither features affect each other in any way 
 
@@ -1248,6 +1341,8 @@ COUNT(low_risk$Category)/ COUNT(risk_scores$Category) *100
 ```{r}
 summary(low_risk$Category)
 ```
+
+
 
 
 
