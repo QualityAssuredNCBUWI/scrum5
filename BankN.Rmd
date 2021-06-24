@@ -666,11 +666,25 @@ deposits.xts <- xts(bankn$deposit, bankn$deposit_date)
 colnames(deposits.xts) <- "deposits"
 ```
 
-## Choosing Quarters | Method
-We chose the quarter with the highest total deposit and 
+## Quartiles | What are quartiles?
+
+#### A quartile is a division of data points into four (4) parts. 
+
+```{r, echo=FALSE, out.width="75%", fig.cap="Quartiles", fig.align='center'}
+knitr::include_graphics("riskscores/quartiles.jpeg")
+```
+
+
+## Choosing Quarters of the Year | Method
+#### We chose the quarter with the highest total deposit and 
 the quarter with the lowest total deposit.
+
+<div class="notes">
 We considered using the busiest quarter and the most idle quarter. But the values were quite close.
 Also we could garner more insights using deposits, for example did persons deposit in larger sums or small sums over a multiple deposits.
+</div>
+
+
 
 ## Choosing Quarters | Results
 
@@ -708,16 +722,16 @@ fourth
 quarts <- data.frame(c(first,sec,third,fourth))
 rownames(quarts) <- c("1st", "2nd","3rd","4th")
 colnames(quarts) <- c("deposits")
-busy <- rownames(quarts)[quarts$deposits == max(quarts$deposits)]
-idle <- rownames(quarts)[quarts$deposits == min(quarts$deposits)]
-busy
-idle
+most <- rownames(quarts)[quarts$deposits == max(quarts$deposits)]
+least <- rownames(quarts)[quarts$deposits == min(quarts$deposits)]
+most
+least
 ```
 
 # Plotting the Graphs
 
 ----
-```{r, fig.align='center', fig.cap="Time Series Showing Deposits in 1st Quarter of the Year"}
+```{r, fig.align='center', fig.cap="Time Series Showing Deposits in 4th Quarter of the Year"}
 plot.xts(deposits.xts[months(index(deposits.xts)) %in% month.name[1:3]], main = "", col = "red")
 ```
 
