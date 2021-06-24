@@ -325,7 +325,7 @@ summary(bankn$housing)
 - `r summary(bankn$loan)` 
 
 ```{r}
-kable(summary(bankn$loan))
+summary(bankn$loan)
 ```
 
 ----
@@ -792,6 +792,7 @@ summary(bankn$deposit)
 hist(bankn$deposit, prob = TRUE, main = "Density of Bank Deposits",ylim=c(0,.0001), xlim=c(0,80000))
 lines(density(bankn$deposit), lwd = 1, col = "blue")
 ```
+## Data Transformation | Normalizing Deposits
 
 ```{r}
 d_norm <- ((bankn[,"deposit"]- d_min) / (d_max - d_min))*((40-1) +1)
