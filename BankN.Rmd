@@ -445,7 +445,7 @@ print(dates_noise)
 
 ## Summary of Data | Month
 
-####  Fixing Errors/Unknown Values
+####  Fixing Errors/Unknown Values | DAY & MONTH
 ```{r}
 onlyFebDates <- bankn[bankn$month=="february" & bankn$day>28,]
 onlyFebDates$day <- onlyFebDates$day-28 
@@ -1303,6 +1303,8 @@ COUNT(low_risk$Category)/ COUNT(risk_scores$Category) *100
 ```{r}
 summary(low_risk$Category)
 ```
+
+
 
 
 
