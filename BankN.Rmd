@@ -39,6 +39,38 @@ antimode <- function(v, empty = FALSE) {
 }
 
 ```
+# Outline
+
+## Outline
+- Background 
+- Terms & Language
+- Data Cleaning & Observation
+- Data Transformation
+- Data Analysis
+
+# Background 
+
+## Background 
+
+### Problem:
+In light of the Covid-19 Pandemic, BankN has notable reductions in transactions, deposits, and commitments to a number of their financial products.
+
+They require QualityAssured to perform complex analysis of their customers from pre-pandemic data to allow for: 
+
+- meaningful insights to aid in decision making 
+- effective lead generation and customer commitment to their financial products. 
+
+
+
+
+# Terms & Language 
+## Terms & Language 
+### Outlier
+An outlier refers to 
+
+
+
+# Data Cleaning & Observations
 
 ## Question 1
 1. Load the dataset and explore the contents, summarizing your findings of the data quality in
@@ -529,6 +561,7 @@ lines(density(bankn$balance), lwd = 1, col = "blue")
 ```{r echo=FALSE}
 str(bankn)
 ```
+# Data Transformation | Question 2-6
 
 # Question 2
 
@@ -739,8 +772,8 @@ plot.xts(deposits.xts[months(index(deposits.xts)) %in% month.name[1:3]], main = 
 ```{r, fig.align='center', fig.cap="Time Series Showing Deposits in 3rd Quarter of the Year"}
 plot.xts(deposits.xts[months(index(deposits.xts)) %in% month.name[7:9]], main = "", col = "blue")
 ```
+# Data Analysis | Question 7
 
-# Question 7
 
 ## Question 7 | a. Which categories of jobs have the highest and lowest average deposits?
 
@@ -896,12 +929,14 @@ married_customer.percent <- COUNT(married_customer[married_customer$marital == "
 
 
 
-## Question 7 | g
-If the Bank wanted to launch a new loan product to target persons who may be considered to have the least credit risk, propose a metric to determine these persons. Use at least 3 features to justify/select your target profile. For example: RefNum < X AND Married AND education==”Tertiary”.
+## g. Propose metric to determine customers with least credit risk.
 
-i. You must be prepared to explain why you made the decision on the variables used for determining the best person to target. This may be helped by investigating what banks generally use.
+### Why? 
+The Bank wants to launch a new loan product to target persons who may be considered to have the least credit risk, propose a metric to determine these persons.
 
-ii. You should extract the subset of data that meets the profile (this could be considered a lead list to be used by customer service to contact these customers). Consider that you will need to provide the bank with the RefNum for the customers they should be targeting.
+i. Justification for chosen metrics
+
+ii. Present subset of data/Lead List that meets the profile 
 
 
 # Question 7 | g
