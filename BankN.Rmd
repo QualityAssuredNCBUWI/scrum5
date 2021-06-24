@@ -325,7 +325,7 @@ summary(bankn$housing)
 - `r summary(bankn$loan)` 
 
 ```{r}
-kable(summary(bankn$loan))
+summary(bankn$loan)
 ```
 
 ----
