@@ -9,6 +9,7 @@ author:
 date: "6/18/2021"
 output:
   ioslides_presentation:
+    css: styles.css
     logo: QualityAssuredlogo.jpeg
     widescreen: true
     smaller: true
@@ -18,14 +19,14 @@ autosize: true
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 options(scipen = 9999)
-options(width = 70)
-knitr::opts_chunk$set(linewidth = 60)
+options(width = 75)
+knitr::opts_chunk$set(linewidth = 75)
 library(knitr)
 library(formatR)
 library(ggplot2)
 library(xts)
 library(tidyquant)
-opts_chunk$set(tidy.opts=list(width.cutoff=40),tidy=TRUE)
+opts_chunk$set(tidy.opts=list(width.cutoff=75),tidy=TRUE)
 mode <- function(v, empty = FALSE) {
   if(empty){
     v = v[v != ""]
@@ -225,15 +226,13 @@ getEducationRatio <- function(jobs){
 
 ## Fixing Errors/Unknown Values
 
+```{r}
+missingEducation <- bankn[!(bankn$education %in% c('tertiary','secondary','primary')), c('job','education')]
+vals <- geteducation(missingEducation$job)
+bankn$education[!(bankn$education %in% c('tertiary','secondary','primary'))] <- vals
+```
 
 ```{r}
-missingEducation <- bankn[!(bankn$education %in% 
-                    c('tertiary','secondary','primary')),
-                  c('job','education')]
-
-bankn$education[!(bankn$education %in% 
-                    c('tertiary','secondary','primary'))] <- geteducation(
-                      missingEducation$job)
 summary(bankn$education)
 ```
 
@@ -339,7 +338,7 @@ missing values :
 sum(is.na(bankn$month))
 ```
 
-# Fixing Errors/Unknown Values
+##  Fixing Errors/Unknown Values
 ```{r}
 onlyFebDates <- bankn[bankn$month=="february" & bankn$day>28,]
 onlyFebDates$day <- onlyFebDates$day-28 
@@ -660,10 +659,6 @@ bankn <- bankn[, colnames(bankn)[c(1:9,14,10:13)]]
 
 Using <strong>eXtensible Time Series (xts)</strong> library:
 ```{r}
-# ------- Remove once deposits are fixed -------
-bankn <- bankn[!is.na(bankn$deposit),]
-# ----------------------------------------------
-
 deposits.xts <- xts(bankn$deposit, bankn$deposit_date)
 colnames(deposits.xts) <- "deposits"
 ```
@@ -950,12 +945,58 @@ ii. You should extract the subset of data that meets the profile (this could be 
 
 # Defining The Metrics
 
+## Defining the Metrics
+
 - Risk scoring was used to assess the metrics for persons who may be considered to have the least credit risk. 
 - Weights were assigned to each of the features base on the impact on the credit risk.
 - The risk score of a user is the summation of all the weight of the features.
 - The total risk score is 19 
-- The risk score was divided into 4 categories base on the riskiness. ![Risk category](riskscores/risk-category.png)
+- The risk score was divided into 4 categories base on the riskiness. 
+```{r, echo=FALSE, out.width="75%", fig.cap="Our Risk Matrix", fig.align='center'}
+knitr::include_graphics("riskscores/risk-category.png")
+```
 
+## Defining the Metrics | Individual Categories
+
+```{r, echo=FALSE, out.width="75%", fig.cap="Risk scores for education", fig.align='center'}
+knitr::include_graphics("riskscores/Education Risk.png")
+```
+
+```{r, echo=FALSE, out.width="75%", fig.cap="Risk scores for deposit", fig.align='center'}
+knitr::include_graphics("riskscores/Deposit Risk.png")
+```
+
+## Defining the Metrics | Individual Categories
+
+```{r, echo=FALSE, out.width="75%", fig.cap="Risk scores for balance", fig.align='center'}
+knitr::include_graphics("riskscores/Balance Risk.png")
+```
+
+```{r, echo=FALSE, out.width="75%", fig.cap="Risk scores for deposit", fig.align='center'}
+knitr::include_graphics("riskscores/Job Risk.png")
+```
+
+## Defining the Metrics | Individual Categories
+
+```{r, echo=FALSE, out.width="75%", fig.cap="Risk scores for loan", fig.align='center'}
+knitr::include_graphics("riskscores/Loan Risk.png")
+```
+
+```{r, echo=FALSE, out.width="75%", fig.cap="Risk scores for housing", fig.align='center'}
+knitr::include_graphics("riskscores/Housing Risk.png")
+```
+
+## Defining the Metrics | Individual Categories
+
+```{r, echo=FALSE, out.width="75%", fig.cap="Risk scores for age", fig.align='center'}
+knitr::include_graphics("riskscores/Age Risk.png")
+```
+
+# Calculating the Risk Scores
+
+## Calculating the Risk Scores
+
+#### First, we copy the main dataframe, to perform in place operations on the copy.
 
 ```{r}
 # copy the main dataframe to change to the scores
