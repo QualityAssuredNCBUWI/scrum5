@@ -1337,12 +1337,20 @@ low_risk <- risk_scores[risk_scores$Category =="Low",]
 bankn.low_risk <- bankn[bankn$Category =="Low",] 
 COUNT(low_risk$Category)/ COUNT(risk_scores$Category) *100
 ```
-### Therefor 324 persons meet this criteria of "low risk"
+### Therefore 324 persons meet this criteria of "low risk"
 ```{r}
 summary(low_risk$Category)
 ```
 
+# Summary
 
+## 
+Complex Data analysis was done on BankN's pre-pandemic dataset that allowed for us to examine their customers to see which ones could be propositioned for new financial products. 
+
+This subset of customers were evaluated on a number of metrics popular for credit risk analysis. 
+
+
+# THANK YOU!
 
 
 
