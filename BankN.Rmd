@@ -407,21 +407,17 @@ mean_deposit <- mean(bankn$deposit)
 upper_limit <- mean_deposit + (2*sd_deposit)
 lower_limit <- mean_deposit - (2*sd_deposit)
 
-for(i in 1:nrow(bankn)){
-  if(bankn[i,'deposit'] > upper_limit){
-    bankn[i,'deposit'] <- upper_limit
-  }
-  
-  if(bankn[i,'deposit'] < lower_limit){
-    bankn[i,'deposit'] <- lower_limit
-  }
-}
+bankn$deposit[bankn$deposit > upper_limit] <- upper_limit
+bankn$deposit[bankn$deposit < lower_limit] <- lower_limit
+
 ```
 ## Summary of Data Cont'd
 The deposit feature stores the amount of money deposited by a customer during their last transaction.A box plot revealed that there are several outliers within this feature. The values are  majority numeric. The measurement type is ratio since there are absolute zeros present. There are also several missing values of type NA.
 
 ```{r}
 boxplot(bankn$deposit)
+hist(bankn$deposit, prob = TRUE, main = "Density of Bank Deposits",ylim=c(0,.0001), xlim=c(0,80000))
+lines(density(bankn$deposit), lwd = 1, col = "blue")
 ```
 
 ###Fixing Missing Values in Deposit. 
@@ -478,17 +474,11 @@ bankn$deposit <- round(d_norm, digits = 0)
 summary(bankn$deposit)
 ```
 
-<<<<<<< HEAD
-=======
-
 ## Summary of Data | Balance
->>>>>>> 0b9ef1d6e48ee8db2b5ef18a31dc6d4bbc809b09
 
 ```{r}
 summary(bankn$balance, maxsum = 10)
 ```
-
-
 
 - Std. Deviation won't work because of characters. Thats why the data type is factor and not numeric
 
@@ -499,13 +489,6 @@ summary(bankn$balance, maxsum = 10)
 ## Values  
 ```{r echo=TRUE}
 bankn$balance[c(8, 54, 26, 87)]
-```
-
-
-## Structure of the data
-```{r echo=FALSE}
-str(bankn)
-#levels(bankn$job)
 ```
 ## Removing noise 
 
@@ -543,19 +526,21 @@ mean_balance <- mean(bankn$balance)
 upper_limit <- mean_balance + (2*sd_balance)
 lower_limit <- mean_balance - (2*sd_balance)
 
-for(i in 1:nrow(bankn)){
-  if(bankn[i,'balance'] > upper_limit){
-    bankn[i,'balance'] <- upper_limit
-  }
-  
-  if(bankn[i,'balance'] < lower_limit){
-    bankn[i,'balance'] <- lower_limit
-  }
-}
-
-boxplot(bankn$balance)
+bankn$balance[bankn$balance > upper_limit] <- upper_limit
+bankn$balance[bankn$balance < lower_limit] <- lower_limit
 ```
 
+```{r}
+boxplot(bankn$balance)
+hist(bankn$balance, prob = TRUE, main = "Density of Bank Balance",ylim=c(0,.000012), xlim =c(-200000,1200000))
+lines(density(bankn$balance), lwd = 1, col = "blue")
+```
+
+
+## Structure of the data
+```{r echo=FALSE}
+str(bankn)
+```
 
 # Question 2
 
@@ -899,8 +884,111 @@ married_customer.percent <- COUNT(married_customer[married_customer$marital == "
 
 
 
-## g. If the Bank wanted to launch a new loan product to target persons who may be considered to have the least credit risk, propose a metric to determine these persons. Use at least 3 features to justify/select your target profile. For example: RefNum < X AND Married AND education==”Tertiary”.
+## Question 7 | g
+If the Bank wanted to launch a new loan product to target persons who may be considered to have the least credit risk, propose a metric to determine these persons. Use at least 3 features to justify/select your target profile. For example: RefNum < X AND Married AND education==”Tertiary”.
 
-- ii. You should extract the subset of data that meets the profile (this could be considered a lead list to be used by customer service to contact these customers). Consider that you will need to provide the bank with the RefNum for the customers they should be targeting.
+i. You must be prepared to explain why you made the decision on the variables used for determining the best person to target. This may be helped by investigating what banks generally use.
+
+ii. You should extract the subset of data that meets the profile (this could be considered a lead list to be used by customer service to contact these customers). Consider that you will need to provide the bank with the RefNum for the customers they should be targeting.
+
+
+# Question 7 | g
+
+## What is Credit Risk?
+
+#### Credit risk is the possibility of a loss resulting from a borrower's failure to repay a loan or meet contractual obligations.
+
+#### We can use the data available to us to create a metric to determine which persons have the least credit risk.
+
+
+## Traditional Metrics used by Banks.
+
+#### 1. Income
+#### 2. Assets
+#### 3. Collateral
+#### 4. Experience
+#### 5. Credit
+
+## What features of our data can give us insights into these traditional metrics?
+
+#### 1. Income -> Deposits, Job, Education, Last Deposit
+#### 2. Assets -> Balance, Marital
+#### 3. Collateral -> Housing, Loan
+#### 4. Experience -> Age, Loan, Duration
+#### 5. Credit -> None
+
+## Metrics Chosen
+
+#### Deposits
+  The size of a persons deposits can give an indication of the size of their income.
+  
+#### Last Deposit
+  The most recent deposits indicate an active banker.
+  
+#### Job
+  A persons job gives an indication of of the stability of their income.
+  
+#### Education
+  A persons education level can give some indication of how knowledgeable they are about loans, or how well they can learn. Used in conjunction with the job, it can indicate the level of income a person makes.
+  
+#### Marital
+  Persons who are married may be able to help each other repay loans. But if they have a personal loan, such as a student loan, it may be a hindrance. May not be helpful.
+  
+## Metrics Chosen
+  
+#### Balance
+  The account balance gives an indication of the how equipped a person is to repay a loan. The bank wouldn't consider a person who is overdraft.
+  
+#### Loan
+  The bank wouldn't want to give another loan to a person who is currently repaying a loan.
+
+#### Housing
+  A person paying a mortgage possess a house that could be used as collateral in case of default
+
+#### Age
+  This can be an indicator of the experience a person has with taking loans.
+
+# Defining The Metrics
+
+## Deposits
+
+  Consider persons in the 3rd Quartile, which is `r summary(bankn$deposits)["3rd Qu."]`
+```{r}
+hist(bankn$deposit, breaks=50)
+```
+
+## Last Deposit
+
+  Consider persons who have only deposited in the final quarter of the year. These persons would perhaps be depositing more frequently, which could indicate a steady income.
+  
+```{r}
+fourth <- bankn[bankn$month %in% c('october','november','december'),]
+```
+
+## Job 
+
+  Used in conjunction with the education level and balance, this could indicate the stability and magnitude of a persons income. The loan could also be applied in tiers to reach a larger population.
+  
+  Jobs considered:
+  - Admin
+  - Blue-Collar
+  - Management
+  - Services
+  - Technician
+  
+## Education
+
+## Loan 
+
+  If a person has a loan already, they would not be considered to be marketed to for another.
+  
+## Balance
+  
+
+
+
+
+
+
 
 
