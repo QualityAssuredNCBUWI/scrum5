@@ -950,6 +950,12 @@ ii. You should extract the subset of data that meets the profile (this could be 
 
 # Defining The Metrics
 
+- Risk scoring was used to assess the metrics for persons who may be considered to have the least credit risk. 
+- Weights were assigned to each of the features base on the impact on the credit risk.
+- The risk score of a user is the summation of all the weight of the features.
+- The total risk score is 19 
+- The risk score was divided into 4 categories base on the riskiness. ![Risk category](riskscores/risk-category.png)
+
 ## Deposits
 
   Consider persons in the 3rd Quartile, which is `r summary(bankn$deposits)["3rd Qu."]`
