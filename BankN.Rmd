@@ -312,45 +312,72 @@ summary(bankn$housing)
 ```
 - The housing data is categorical, so no standard values were obtained from it, it simply gave a count of yes or no. There were also no outlier or missing values.
 
+
 ## Summary of Data | Loan
 
-- Does this person have a personal loan?
+- The loan represents whether the person have a personal loan or not.
+- They are categorical measurement
+- It was found that 15 if the loan values were missing 
+- All the other value were correct with yes and no 
+-  "",  "yes",  "no"
+- `r summary(bankn$loan)` 
+
 ```{r}
-summary(bankn$loan)
-levels(bankn$loan)
+kable(summary(bankn$loan))
+```
+
+----
+
+
+```{r, echo=FALSE}
+kable(bankn[bankn$loan == "" , c("age","marital", "education", "housing", "loan")][1:5,], caption = "Table showing 5 Missing loan values" )
 ```
 
 ## Summary of Data | Loan
 
-- The loan data is representing a Boolean if the user has a loan or not
-- It is represented as categorical measurement with values "yes" or "no"
-- There are 15 missing values that are read as a blank field in the dataframe.
-- This data column has good data as 1103 of the field data value is filled
+- To fix the missing values they were set to no
+- This was done because there was not enough information to tell if the user had a lone
+- In addition, a loan is a big responsibility to give someone
 
-## Summary of Data | Loan
+- It was fixed below
+```{r}
+bankn[bankn$loan == "", "loan"] <- "no"
+```
 
-The loan categorical measurement have 15 missing values. These missing values 
+[comment]: <> ( The loan categorical measurement have 15 missing values. These missing values 
 can be removed or it can be replaced. The option to replace the values were 
 considered. 
 Normally, to get a loan the applicants, job, finances, age, credit  and other loans are normally considered in a financial institution. However, the dataset shows the value for loans being empty. The option to use the jobs, age, education
 and mortgage was considered to decide if a user has a loan or not. However, although a model can dictate the possibility of someone being given a loan. It is
 not 100% correct that the person had a loan.Therefore, to solve the issue the
 empty values for the loans were set to no. It was assumed that an empty value 
-is a representation of the user being skipped due to them not having a loan. 
+is a representation of the user being skipped due to them not having a loan. )
 
+----
 
-- The spaces set to "no"
+- The missing values are now removed 
 ```{r}
-bankn[bankn$loan == "", "loan"] <- "no"
+summary(bankn$loan)
 ```
 
 
-## Summary of Data | Contact
+##  Summary of Data | Contact
+
+- The contact column was in the data but not the data dictionary 
+- The contact column is empty and has no value. It cannot be used in analysis.
+- The column would be removed as it would not be used.
+
 ```{r}
 summary(bankn$contact)
 ```
-- The contact column is empty and has no value. It cannot be used in analysis.
-- The column would be removed as it would not be used.
+
+----
+
+```{r, echo=FALSE}
+kable(bankn[, c("marital", "education", "housing", "loan", "contact")][1:3,], caption = "Table showing empty contact column" )
+```
+
+...
 
 - contacts column removal
 ```{r}
@@ -600,21 +627,7 @@ bankn$duration <- round(bankn$duration/60, digits = 2)
 kable(head(bankn$duration, n = 3))
 ```
 
-# Question 3
-
-
-## Question 3 | Apply one of the binning methods discussed to discretize age. Justify your selection and apply the changes to make age a categorical variable (factor in R).
-
-----
-
-```{r, fig.cap="Distribution of Ages", fig.align='center'}
-hist(bankn$age, col="lightgreen", col.lab="darkgrey",
-     col.axis="darkgrey", xlab = "Age", main="")
-```
-
-## Discretization Method | Generation Groups
-
-### Justification
+## Data Transformation | Age Discretization
 
 1. Ages do not contain outliers.
 
@@ -624,8 +637,16 @@ hist(bankn$age, col="lightgreen", col.lab="darkgrey",
 
 4. Standard Discretization methods would not offer as much insights as this method.
 
-## Categories Selected
+--- 
 
+```{r, fig.cap="Distribution of Ages", fig.align='center', echo=FALSE}
+hist(bankn$age, col="lightgreen", col.lab="darkgrey",
+     col.axis="darkgrey", xlab = "Age", main="")
+```
+
+## Discretization Method | Generation Groups
+
+##### Categories Selected
 - Generation Z (1996 – 2015, age <=25)
 - Millennial (1977 – 1995, age 26 <=44)
 - Generation X (1965 – 1976, age 45 <= 56)
@@ -642,10 +663,15 @@ age.temp <- cut(bankn$age, breaks = c(age.min - 1, 25, 44, 56, age.max),
 bankn$age <- age.temp
 ```
 
-## Discretization | New Values
+## Data Transformation | Age new values
 
 ```{r}
 kable(head(bankn$age, n = 5))
+```
+
+
+```{r, echo=FALSE}
+kable(bankn[, c("age","marital", "education")][1:3,], caption = "Table showing new age values" )
 ```
 
 # Question 4
@@ -898,14 +924,19 @@ jobs_unemployed <- bankn[bankn$job == 'unemployed',]
 summary(jobs_unemployed$education)
 ```
 
-## c. What percentage of persons have both mortgage and personal loan?
+## Data Anlysis | Morgage and personal loan percentage 
+
 ```{r}
 mortgage_and_loan <- bankn[,c("housing", "loan")]
 mortgage_and_loan.percent <- COUNT(mortgage_and_loan[mortgage_and_loan$housing == "yes" & mortgage_and_loan$loan == "yes",])/ COUNT(mortgage_and_loan$housing) *100
 
 ```
 
-- The percentage of persons who have both mortgage and personal loan is `r mortgage_and_loan.percent`%. 
+- The percentage of persons who have both mortgage and personal loan is `r round(mortgage_and_loan.percent, digits = 2)`%.
+- This is `r COUNT(mortgage_and_loan[mortgage_and_loan$housing == "yes" & mortgage_and_loan$loan == "yes",])` of `r COUNT(mortgage_and_loan$housing)`` 
+
+--- 
+
 
 
 ## Data Analysis | Which age-group has the highest average balance?
@@ -966,18 +997,21 @@ married_customer.percent <- COUNT(married_customer[married_customer$marital == "
 ## g. Propose metric to determine customers with least credit risk.
 
 ### Why? 
-The Bank wants to launch a new loan product to target persons who may be considered to have the least credit risk, propose a metric to determine these persons.
+The Bank wants to launch a new loan product to target persons who may be considered to have the least credit risk
 
+### We will: 
 i. Justification for chosen metrics
 
 ii. Present subset of data/Lead List that meets the profile 
 
 
-# Question 7 | g
+# Background of Credit Risk Assessment
 
 ## What is Credit Risk?
 
 #### Credit risk is the possibility of a loss resulting from a borrower's failure to repay a loan or meet contractual obligations.
+
+#### 
 
 #### We can use the data available to us to create a metric to determine which persons have the least credit risk.
 
@@ -1195,8 +1229,14 @@ bankn$Category <- ifelse(risk_scores$TotalScore <= 8, "Very High",
 ## Extract the low risk customers
 ```{r}
 low_risk <- risk_scores[risk_scores$Category =="Low",] 
+```
+### 29% of customers are low risk: 
+```{r}
 bankn.low_risk <- bankn[bankn$Category =="Low",] 
 COUNT(low_risk$Category)/ COUNT(risk_scores$Category) *100
+```
+### Therefor 324 persons meet this criteria of "low risk"
+```{r}
 summary(low_risk$Category)
 ```
 
