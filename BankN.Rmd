@@ -990,10 +990,18 @@ hist(bankn$deposit, breaks=50)
 ## Age 
 
 ```{r}
+# Initialize dataframe
 risk_scores <- bankn[,]
+# Change Age
 risk_scores$age <- ifelse(risk_scores$age == "Baby Boomers", 1, ifelse(risk_scores$age == "Gen X", 2, 3))
-first <- risk_scores$deposit <= summary(risk_scores$deposit)["1st Qu."]
-risk_scores$deposit <- ifelse(risk_scores$deposit <= summary())
+first <- summary(risk_scores$deposit)["1st Qu."]
+sec <- summary(risk_scores$deposit)["Median"]
+third <- summary(risk_scores$deposit)["3rd Qu."]
+fourth <- summary(risk_scores$deposit)["Max."]
+# Change Deposits
+risk_scores$deposit <- ifelse(risk_scores$deposit <= first, 1, ifelse(risk_scores$deposit <= sec, 2, ifelse(risk_scores$deposit <= third, 3, 4)))
+# Change Housing
+risk_scores$housing <- ifelse(risk_scores$housing == "yes", 1, 0)
 ```
 
 
