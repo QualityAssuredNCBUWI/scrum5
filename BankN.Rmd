@@ -39,17 +39,47 @@ antimode <- function(v, empty = FALSE) {
 }
 
 ```
+# Outline
 
-## Question 1
-1. Load the dataset and explore the contents, summarizing your findings of the data quality in
-relation to standard measures (including, mean, median, standard deviation, missing values,
-outliers, etc.). Review the data dictionary attached to get the context of each measurement.
+## Outline
+- Background 
+- Terms & Language
+- Data Cleaning & Observation
+- Data Transformation
+- Data Analysis
 
-    a.Describe the data in terms of the types and measurements and what each measurement
-represents (purpose of features, range of values, min, max, etc.)
+# Background 
 
-    b.Fix missing values, noise and outliers as necessary
-    
+## Background 
+
+### Problem:
+In light of the Covid-19 Pandemic, BankN has notable reductions in transactions, deposits, and commitments to a number of their financial products.
+
+
+
+### Proposed Solution:
+They require QualityAssured to perform complex analysis of their customers from pre-pandemic data to allow for: 
+
+- meaningful insights to aid in decision making 
+- effective lead generation and customer commitment to their financial products. 
+
+
+
+
+# Terms & Language 
+## Terms & Language 
+### Outlier
+An outlier refers to 
+
+
+
+# Data Cleaning & Observations
+
+## Data Cleaning and Observation
+
+##### In this section, we explored the dataset to determine the quality of the data provided.
+##### We engaged in cleaning records where necessary.
+
 ```{r echo=FALSE}
 bankn <- read.csv("2021-Set03-QualityAssured.csv", 
                   header = T, sep = ",", stringsAsFactors = T)
@@ -57,34 +87,44 @@ bankn <- read.csv("2021-Set03-QualityAssured.csv",
 
 # Summary of Data 
 
-## Summary of Data | RefNum
-- A unique identifier for each customer
+## Data Cleaning and Observation | RefNum
 ```{r}
 summary(bankn$RefNum)
 ```
 As seen above the values range from 10023467 to 10024584, which accurately
 reflects that there are 1118 records. These Reference numbers may be needed later on.
-There does not appear to be any outliers or missing values.
 
-## Summary of Data | Age
+- There does not appear to be any outliers or missing values.
 
-- numeric age of the customer
+## Data Cleaning and Observation | Age
+
 ```{r}
 summary(bankn$age)
 ```
 - Std. Deviation (returns NA because of missing values)
 
-`r sd(bankn$age)`
+```{r}
+sd(bankn$age)
+```
+
 - There appears to be no unusual ages present, however, there are missing values. 
 We have chosen to replace them with the median age.
 
-## Fixing the missing values in age
+## Data Cleaning and Observation | Age
+#### Fixing the missing values in age
+
+<div class="notes">
+The median was used to replace missing values.
+</div>
+
 ```{r}
 bankn$age[is.na(bankn$age)] <- median(bankn$age, na.rm = T)
 summary(bankn$age)
 ```
 
-## Summary of Data | Marital Status
+
+
+## Data Cleaning and Observation | Marital Status
 
 - Marital status ("married","divorced","single"; note: "divorced" means divorced or widowed)
 
@@ -93,27 +133,29 @@ summary(bankn$marital)
 ```
 Nothing appears to be extraordinary in the marital status field.
 
-## Summary of Data | Job
-
-Types of Job ("admin.", "unemployed", "management","housemaid", "entrepreneur", "student", "blue-collar","self-employed", "retired", "technician", "services")
+## Data Cleaning and Observation | Job
 
 ```{r}
 summary(bankn$job)
 ```
 - According to the data dictionary, there should be only 11 levels,
-but there is one extra level. A " " character. There are 5 records with the job.
+but there is one extra level. A " " character. There are 5 records with this.
 
 ----
 
 - After considering whether the values could be corrected. 4 of the 5 records also had no education level attached, which was the metric to be used to fill the missing education values.
 
-## Job's Missing Values
+## Data Cleaning and Observation
+#### Job's Missing Values
+
 ```{r}
 bankn[!(bankn$job %in% c("admin.", "unemployed", "management","housemaid", "entrepreneur", "student", "blue-collar","self-employed", "retired", "technician", "services")),2:5]
 ```
 - Thus, It was determined that no other metric was reliable. The record containing the education level was filled with the most prevalent job and the other 4 removed from the data set.
 
-## Code to remove values
+## Data Cleaning and Observation | Job
+
+#### Code to remove values
 
 ```{r}
 bankn <- bankn[(bankn$job %in% c("admin.", "unemployed", "management","housemaid", "entrepreneur", "student", "blue-collar","self-employed", "retired", "technician", "services")) | (bankn$education %in% 
@@ -121,34 +163,39 @@ bankn <- bankn[(bankn$job %in% c("admin.", "unemployed", "management","housemaid
 summary(bankn$job)
 ```
 
-## Record with Educational Level but Missing Job (Before)
+## Data Cleaning and Observation | Job
+
+#### Record with Educational Level but Missing Job (Before)
 ```{r}
 before <- bankn[!(bankn$job %in% c("admin.", "unemployed", "management","housemaid", "entrepreneur", "student", "blue-collar","self-employed", "retired", "technician", "services")),]
 before
 refnum <- before$RefNum
 ```
 
-## Correcting the Missing Job with an Education Value
+## Data Cleaning and Observation | Job
+
+#### Correcting the Missing Job with an Education Value
 
 ```{r}
 bankn[!(bankn$job %in% c("admin.", "unemployed", "management","housemaid", "entrepreneur", "student", "blue-collar","self-employed", "retired", "technician", "services")),"job"] <- mode(bankn$job[bankn$education == "primary"])
 ```
 
-## Record with Educational Level but Missing Job (After)
+## Data Cleaning and Observation | Job
+
+#### Record with Educational Level but Missing Job (After)
 ```{r}
-bankn[bankn$RefNum == refnum,]
+kable(bankn[bankn$RefNum == refnum,])
 ```
 
-## Summary of Data | Education
+## Data Cleaning and Observation | Education
 
-- ("secondary","primary","tertiary")
 ```{r}
 summary(bankn$education)
 ```
 For the education level, we have 94 empty values and 2 "?" characters that we
 believe may represent an unknown value. To replace these values, we have 
 decided it best to replace the missing values based on job. Certain types 
-of jobs dominate certain education levels as seen here:.
+of jobs dominate certain education levels as seen here:
 
 # Education Distribution by Job
 
@@ -174,7 +221,8 @@ ggplot(bankn[bankn$education == "primary",c(3,5)], aes(x="", y=job, fill=job)) +
 ```
 
 
-## Analysis
+## Data Cleaning and Observation | Education
+
 With this information we can assign an education level to match the prevalence 
 of that job at that level.
 
@@ -219,7 +267,9 @@ getEducationRatio <- function(jobs){
 }
 ```
 
-## Fixing Errors/Unknown Values
+## Data Cleaning and Observation | Education
+
+#### Fixing Errors/Unknown Values
 
 ```{r}
 missingEducation <- bankn[!(bankn$education %in% c('tertiary','secondary','primary')), c('job','education')]
@@ -231,21 +281,27 @@ bankn$education[!(bankn$education %in% c('tertiary','secondary','primary'))] <- 
 summary(bankn$education)
 ```
 
-## Justifying Using the Most Prevalent Job
+## Data Cleaning and Observation | Education
+
+#### Justifying Using the Most Prevalent Job
 
 We can see by using ratios that most jobs are disproportionately associated with certain
 education levels
 
-## Code for Values
+## Data Cleaning and Observation | Education
+
+#### Code for calculating the ratios
 ```{r}
 jobs <- getEducationRatio(c("admin.", "unemployed", "management","housemaid", "entrepreneur", "student", "blue-collar","self-employed", "retired", "technician", "services"))
 colnames(jobs) <- c("tertiary","secondary","primary")
 rownames(jobs) <- c("admin.", "unemployed", "management","housemaid", "entrepreneur", "student", "blue-collar","self-employed", "retired", "technician", "services")
 ```
 
-## Jobs with Educational Level
+## Data Cleaning and Observation | Education
+
+#### Jobs with Educational Level
 ```{r}
-jobs
+kable(jobs)
 ```
 
 
@@ -401,6 +457,7 @@ From the result of the box plot we can see there are many outliers but with the 
   - there are 152 missing values
 ----
 ```{r}
+<<<<<<< HEAD
 summary(bankn$deposit)
 ```
 ## Summary of Data | Deposit
@@ -417,7 +474,11 @@ bankn[is.na(bankn$deposit),]
 ----
 ```{r}
 bankn[(bankn$deposit==0),]
+=======
+kable(head(bankn[is.na(bankn$deposit),],n = 5))
+>>>>>>> 2bf9b449e7d5ca8545eee82c7d823fe72187af95
 ```
+
 
 ## Summary of Data | Deposit
 
@@ -500,7 +561,7 @@ summary(bankn$balance, maxsum = 10)
 
 ####  Values  
 ```{r echo=TRUE}
-bankn$balance[c(8, 54, 26, 87)]
+kable(bankn$balance[c(8, 54, 26, 87)])
 ```
 
 ## Summary of Data | Balance
@@ -560,6 +621,7 @@ lines(density(bankn$balance), lwd = 1, col = "blue")
 ```{r echo=FALSE}
 str(bankn)
 ```
+# Data Transformation | Question 2-6
 
 # Question 2
 
@@ -573,7 +635,7 @@ bankn$duration <- round(bankn$duration/60, digits = 2)
 
 #### After
 ```{r}
-head(bankn$duration, n = 3)
+kable(head(bankn$duration, n = 3))
 ```
 
 # Question 3
@@ -612,7 +674,7 @@ hist(bankn$age, col="lightgreen", col.lab="darkgrey",
 age.max = max(bankn$age)
 age.min = min(bankn$age)
 new.max = age.max + 1
-age.temp <- cut(bankn$age, breaks = c(age.min - 1, 23, 44, 56, age.max),
+age.temp <- cut(bankn$age, breaks = c(age.min - 1, 25, 44, 56, age.max),
                 labels = c("Gen Z", "Millennials", "Gen X", "Baby Boomers"), right = TRUE)
 # data.frame(old = bankn$age, new = age.temp) 
 bankn$age <- age.temp
@@ -621,7 +683,7 @@ bankn$age <- age.temp
 ## Discretization | New Values
 
 ```{r}
-head(bankn$age, n = 5)
+kable(head(bankn$age, n = 5))
 ```
 
 # Question 4
@@ -673,12 +735,16 @@ bankn$last_deposit <- Sys.Date() - temp
 ## Question 5 | Result
 
 ```{r}
-head(bankn[c(8,9,13)], n = 5)
+kable(head(bankn[c(8,9,13)], n = 5))
 ```
 
-# Question 6
+# Comparison using Time Series
 
-## Question 6 | Plot time-series graph(s) to show a comparison between deposits made over 2 comparative periods within the data (month/quarter).
+## Comparison using Time Series 
+
+#### In this section, we compared two time periods within the data using the deposit feature.
+
+## Comparison using Time Series
 
 1. Add a new field to store the date object of the last deposit
 
@@ -689,7 +755,9 @@ bankn$deposit_date <- temp
 bankn <- bankn[, colnames(bankn)[c(1:9,14,10:13)]]
 ```
 
-## Create Time Series
+## Comparison using Time Series
+
+#### Create Time Series
 
 Using <strong>eXtensible Time Series (xts)</strong> library:
 ```{r}
@@ -706,9 +774,8 @@ knitr::include_graphics("riskscores/quartiles.jpeg")
 ```
 
 
-## Choosing Quarters of the Year | Method
-#### We chose the quarter with the highest total deposit and 
-the quarter with the lowest total deposit.
+## Comparison using Time Series | Choosing Quarters of the Year 
+#### We chose the quarter with the highest total deposit and the quarter with the lowest total deposit.
 
 <div class="notes">
 We considered using the busiest quarter and the most idle quarter. But the values were quite close.
@@ -717,7 +784,7 @@ Also we could garner more insights using deposits, for example did persons depos
 
 
 
-## Choosing Quarters | Results
+## Comparison using Time Series | Choosing Quarters
 
 #### 1st Quarter
 ```{r}
@@ -731,7 +798,7 @@ sec <- SUM(bankn[bankn$month %in% c('april','may','june'),"deposit"])
 sec
 ```
 
-## Choosing Quarters | Results
+## Comparison using Time Series | Choosing Quarters
 
 #### 3rd Quarter
 ```{r}
@@ -745,7 +812,7 @@ fourth <- SUM(bankn[bankn$month %in% c('october','november','december'),"deposit
 fourth
 ```
 
-## Choosing Quarters | Results
+## Comparison using Time Series | Results
 
 #### Our two quarters are:
 
@@ -763,17 +830,17 @@ least
 
 ----
 ```{r, fig.align='center', fig.cap="Time Series Showing Deposits in 4th Quarter of the Year"}
-plot.xts(deposits.xts[months(index(deposits.xts)) %in% month.name[1:3]], main = "", col = "red")
+plot.xts(deposits.xts[months(index(deposits.xts)) %in% month.name[1:3]], main = "", col = "red", ylim = c(0,50))
 ```
 
 ----
 ```{r, fig.align='center', fig.cap="Time Series Showing Deposits in 3rd Quarter of the Year"}
-plot.xts(deposits.xts[months(index(deposits.xts)) %in% month.name[7:9]], main = "", col = "blue")
+plot.xts(deposits.xts[months(index(deposits.xts)) %in% month.name[7:9]], main = "", col = "blue", ylim = c(0,50))
 ```
+# Data Analysis | Question 7
 
-# Question 7
 
-## Question 7 | a. Which categories of jobs have the highest and lowest average deposits?
+## Data Analysis | Which categories of jobs have the highest and lowest average deposits?
 
 ```{r}
 job_deposits <- aggregate(bankn$deposit, by = list(bankn$job), FUN = mean, na.rm = TRUE)
@@ -793,7 +860,7 @@ job_deposits_chart <- ggplot(job_deposits, aes(x=job, y=avg_deposit)) +
 job_deposits_chart
 ```
 
-## Question 7 | a. Which categories of jobs have the highest and lowest average deposits?
+## Data Analysis | Which categories of jobs have the highest and lowest average deposits?
 
 ### From the lollipop chart, we can see that:
 
@@ -881,7 +948,7 @@ mortgage_and_loan.percent <- COUNT(mortgage_and_loan[mortgage_and_loan$housing =
 - The percentage of persons who have both mortgage and personal loan is `r mortgage_and_loan.percent`%. 
 
 
-## Question 7 | d. Which age-group has the highest average balance?
+## Data Analysis | Which age-group has the highest average balance?
 
 ```{r}
 age_balance <- aggregate(bankn$balance, by = list(bankn$age), FUN = mean, na.rm = TRUE)
@@ -898,13 +965,22 @@ age_balance.max <- age_balance[age_balance$Avg.Balance == max(age_balance$Avg.Ba
 age_balance_chart
 ```
 
-## Question 7 | d. Which age-group has the highest average balance?
+## Data Analysis | Which age-group has the highest average balance?
 
 ### From the bar chart, we can see that:
 
-### - The age group with the highest average balance is: <strong>`r age_balance.max$Age_Group`</strong>  at \$`r round(age_balance.max$Avg.Balance, digits = 2)`
+### - The age group with the highest average balance is: <strong>`r age_balance.max$Age_Group`</strong>  at <strong> \$`r round(age_balance.max$Avg.Balance, digits = 2)` </strong>
+
+## Data Analysis | Which age-group has the highest average balance?
+
+Remember, The average is greatly affected by the representation of age groups in the data.
 
 
+## Data Analysis | Which age-group has the highest average balance?
+
+```{r, fig.align='center'}
+barplot(prop.table(table(bankn$age)))
+```
 
 ## e. Is there a correlation between deposit and balance? Discuss the findings. Explain the implications.
 
@@ -927,19 +1003,24 @@ married_customer.percent <- COUNT(married_customer[married_customer$marital == "
 
 
 
-## Question 7 | g
-If the Bank wanted to launch a new loan product to target persons who may be considered to have the least credit risk, propose a metric to determine these persons. Use at least 3 features to justify/select your target profile. For example: RefNum < X AND Married AND education==”Tertiary”.
+## g. Propose metric to determine customers with least credit risk.
 
-i. You must be prepared to explain why you made the decision on the variables used for determining the best person to target. This may be helped by investigating what banks generally use.
+### Why? 
+The Bank wants to launch a new loan product to target persons who may be considered to have the least credit risk
 
-ii. You should extract the subset of data that meets the profile (this could be considered a lead list to be used by customer service to contact these customers). Consider that you will need to provide the bank with the RefNum for the customers they should be targeting.
+### We will: 
+i. Justification for chosen metrics
+
+ii. Present subset of data/Lead List that meets the profile 
 
 
-# Question 7 | g
+# Background of Credit Risk Assessment
 
 ## What is Credit Risk?
 
 #### Credit risk is the possibility of a loss resulting from a borrower's failure to repay a loan or meet contractual obligations.
+
+#### 
 
 #### We can use the data available to us to create a metric to determine which persons have the least credit risk.
 
@@ -1157,8 +1238,14 @@ bankn$Category <- ifelse(risk_scores$TotalScore <= 8, "Very High",
 ## Extract the low risk customers
 ```{r}
 low_risk <- risk_scores[risk_scores$Category =="Low",] 
+```
+### 29% of customers are low risk: 
+```{r}
 bankn.low_risk <- bankn[bankn$Category =="Low",] 
 COUNT(low_risk$Category)/ COUNT(risk_scores$Category) *100
+```
+### Therefor 324 persons meet this criteria of "low risk"
+```{r}
 summary(low_risk$Category)
 ```
 
