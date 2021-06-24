@@ -1007,6 +1007,14 @@ risk_scores$job <- ifelse(risk_scores$job == "admin.", 3,
   If a person has a loan already, they would not be considered to be marketed to for another.
   
 ## Balance
+```{r}
+summary(risk_scores$balance)
+first_quartile<- summary(risk_scores$balance)["1st Qu."]
+second_quartile<- summary(risk_scores$balance)["Median"]
+third_quartile<- summary(risk_scores$balance)["3rd Qu."]
+fourth_quartile<- summary(risk_scores$balance)["Max."]
+risk_scores$balance<- ifelse(risk_scores$balance <= first_quartile,1, ifelse(risk_scores$balance <= second_quartile, 2, ifelse(risk_scores$balance <= third_quartile, 3, 4)))
+```
 
 ## Housing 
 ```{r}
