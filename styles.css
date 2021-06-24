@@ -1,5 +1,19 @@
 /* css*/
 
+*{
+  font-family: Sans-Serif !important;
+}
+
+h1{
+  color: black;
+  background-color: #DEF185;
+}
+
+h4.author{
+  font-size: 24px;
+  color: black;
+}
+
 .gdbar img {
   width: 150px !important;
   height: 150px !important;

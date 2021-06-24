@@ -1,12 +1,7 @@
 ---
 title: "BankN Case Study"
-author: 
-  - Nathaniel Bedassie
-  - Jheanel Brown
-  - Taffeya Dunkley
-  - Phillip Llewelyn
-  - Tai-vaughn White
-date: "6/18/2021"
+author: Quality Assured
+date: "June 24th, 2021"
 output:
   ioslides_presentation:
     css: styles.css
@@ -63,7 +58,7 @@ bankn <- read.csv("2021-Set03-QualityAssured.csv",
 # Summary of Data 
 
 ## Summary of Data | RefNum
-- ***A unique identifier for each customer***
+- A unique identifier for each customer
 ```{r}
 summary(bankn$RefNum)
 ```
@@ -146,7 +141,7 @@ bankn[bankn$RefNum == refnum,]
 
 ## Summary of Data | Education
 
-- ***("secondary","primary","tertiary")***
+- ("secondary","primary","tertiary")
 ```{r}
 summary(bankn$education)
 ```
@@ -263,7 +258,7 @@ summary(bankn$housing)
 
 ## Summary of Data | Loan
 
-- ***Does this person have a personal loan***
+- Does this person have a personal loan?
 ```{r}
 summary(bankn$loan)
 levels(bankn$loan)
