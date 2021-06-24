@@ -956,6 +956,12 @@ ii. You should extract the subset of data that meets the profile (this could be 
 - The total risk score is 19 
 - The risk score was divided into 4 categories base on the riskiness. ![Risk category](riskscores/risk-category.png)
 
+
+```{r}
+# copy the main dataframe to change to the scores
+risk_scores <- bankn[,]
+```
+
 ## Deposits
 
   Consider persons in the 3rd Quartile, which is `r summary(bankn$deposits)["3rd Qu."]`
@@ -990,7 +996,6 @@ hist(bankn$deposit, breaks=50)
 ## Age 
 
 ```{r}
-risk_scores <- bankn[,]
 risk_scores$age <- ifelse(risk_scores$age == "Baby Boomers", 1, ifelse(risk_scores$age == "Gen X", 2, 3))
 ```
 
