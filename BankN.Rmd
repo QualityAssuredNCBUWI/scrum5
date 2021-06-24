@@ -1010,7 +1010,7 @@ risk_scores$education <- ifelse(risk_scores$education == "primary", 1, ifelse(ri
 
   If a person has a loan already, they would not be considered to be marketed to for another.
 ```{r}
-risk_scores$loan <- ifelse(risk_scores$loan == "yes", 1, -1)
+risk_scores$loan <- ifelse(risk_scores$loan == "yes", -1, 1)
 ```
   
   
