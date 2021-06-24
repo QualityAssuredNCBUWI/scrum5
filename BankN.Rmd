@@ -399,7 +399,7 @@ summary(bankn$month)
 ```
 * Data type: Categorical
 
-*  Value Range : "january" to "december"
+* Value Range : "january" to "december"
 
 * Min : month(s) with lowest frequency 
 
