@@ -593,7 +593,7 @@ hist(bankn$age, col="lightgreen", col.lab="darkgrey",
 age.max = max(bankn$age)
 age.min = min(bankn$age)
 new.max = age.max + 1
-age.temp <- cut(bankn$age, breaks = c(age.min, 25, 44, 56, age.max),
+age.temp <- cut(bankn$age, breaks = c(age.min - 1, 23, 44, 56, age.max),
                 labels = c("Gen Z", "Millennials", "Gen X", "Baby Boomers"), right = TRUE)
 # data.frame(old = bankn$age, new = age.temp) 
 bankn$age <- age.temp
@@ -984,6 +984,26 @@ fourth <- bankn[bankn$month %in% c('october','november','december'),]
   
 ## Balance
   
+
+```{r}
+risk_scores <- bankn[,]
+risk_scores$age <- ifelse(risk_scores$age == "primary", 1, ifelse(risk_scores$age == "secondary", 2, 3))
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
