@@ -5,8 +5,10 @@
 }
 
 h1{
-  color: black;
+  color: black !important;
   background-color: #DEF185;
+  padding: 1%;
+  border-radius: 5px;
 }
 
 h4.author{

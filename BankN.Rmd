@@ -263,10 +263,15 @@ summary(bankn$housing)
 summary(bankn$loan)
 levels(bankn$loan)
 ```
+
+## Summary of Data | Loan
+
 - The loan data is representing a Boolean if the user has a loan or not
 - It is represented as categorical measurement with values "yes" or "no"
 - There are 15 missing values that are read as a blank field in the dataframe.
 - This data column has good data as 1103 of the field data value is filled
+
+## Summary of Data | Loan
 
 The loan categorical measurement have 15 missing values. These missing values 
 can be removed or it can be replaced. The option to replace the values were 
@@ -284,7 +289,7 @@ bankn[bankn$loan == "", "loan"] <- "no"
 ```
 
 
-### Contact
+## Summary of Data | Contact
 ```{r}
 summary(bankn$contact)
 ```
@@ -333,13 +338,14 @@ missing values :
 sum(is.na(bankn$month))
 ```
 
-##  Fixing Errors/Unknown Values
+## Summary of Data | Month
+
+####  Fixing Errors/Unknown Values
 ```{r}
 onlyFebDates <- bankn[bankn$month=="february" & bankn$day>28,]
 onlyFebDates$day <- onlyFebDates$day-28 
 onlyFebDates$month <- "march"
 bankn[bankn$month=="february" & bankn$day>28,] <- onlyFebDates
-
 ```
 
 ## Summary of Data | Duration
@@ -354,10 +360,15 @@ Data Type: Since the Duration data type is a measure of the length of time spent
 
 Range of value: the values present range from 2 to 2177 (seconds)
 
+## Summary of Data | Duration
+
 min: using the "min" function we can find the value with the shortest call duration 
 ```{r}
 min(bankn$duration)
 ```
+
+## Summary of Data | Duration
+
 max: using the "max" function we can find the value with the longest call duration 
 ```{r}
 max(bankn$duration)
@@ -367,20 +378,31 @@ missing values: From the summary of the vector we can see that there are no miss
 noise: When looking at the structure of the data set we see that the "duration" factor consists of purely integers
 
 outliers: With the use of a box plot we can see if any outliers exist
+
+## Summary of Data | Duration
+
 ```{r}
 boxplot(bankn$duration)
 ```
 
 From the result of the box plot we can see there are many outliers but with the nature or the feature in question these outliers can be considered valid data as the length of time a person would be willing to stay on the phone may vary 
 
+
 ## Summary of Data | Deposit
+
+#### Fixing Missing Values in Deposit. 
+There are 152 missing values missing within the data. In order to fix them, central tendency is used.Specifically, the mean is used because the data is skewed.The missing values will be replaced with the median for individual's who are grouped by the job feature.
 ```{r}
-summary(bankn$deposit[bankn$job=='admin'])
+head(bankn[is.na(bankn$deposit),],n = 10)
+```
+```{r}
+bankn[(bankn$deposit==0),]
 ```
 
-## Fixing the missing values and noise
-```{r}
+## Summary of Data | Deposit
 
+#### Fixing the missing values and noise
+```{r}
 median_list <- aggregate(bankn$deposit, by=list(bankn$job), FUN=median, na.rm = TRUE)
 
 missing_deposits <- bankn[is.na(bankn$deposit) | bankn$deposit==0,]
@@ -388,13 +410,12 @@ missing_deposits <- bankn[is.na(bankn$deposit) | bankn$deposit==0,]
 for (i in 1:nrow(missing_deposits)){
   missing_deposits[i,'deposit'] <- median_list[median_list$Group.1 == (missing_deposits[i,'job']),'x']
 }
-
 bankn[is.na(bankn$deposit) | bankn$deposit==0,] <- missing_deposits
-
 ```
 
+## Summary of Data | Deposit
 
-## Removing outliers
+####  Removing outliers
 ```{r}
 sd_deposit <- sd(bankn$deposit)
 mean_deposit <- mean(bankn$deposit)
@@ -405,67 +426,31 @@ bankn$deposit[bankn$deposit > upper_limit] <- upper_limit
 bankn$deposit[bankn$deposit < lower_limit] <- lower_limit
 
 ```
-## Summary of Data Cont'd
+
+## Summary of Data | Deposit
 The deposit feature stores the amount of money deposited by a customer during their last transaction.A box plot revealed that there are several outliers within this feature. The values are  majority numeric. The measurement type is ratio since there are absolute zeros present. There are also several missing values of type NA.
 
-```{r}
+----
+```{r, fig.align='center', fig.cap='Boxplot of Deposits'}
 boxplot(bankn$deposit)
+```
+
+----
+```{r, fig.align='center', fig.cap='Density Plot of Deposits'}
 hist(bankn$deposit, prob = TRUE, main = "Density of Bank Deposits",ylim=c(0,.0001), xlim=c(0,80000))
 lines(density(bankn$deposit), lwd = 1, col = "blue")
 ```
 
-###Fixing Missing Values in Deposit. 
-There are 152 missing values missing within the data. In order to fix them, central tendency is used.Specifically, the mean is used because the data is skewed.The missing values will be replaced with the median for individual's who are grouped by the job feature.
-```{r}
-bankn[is.na(bankn$deposit),]
-```
-```{r}
-bankn[(bankn$deposit==0),]
-```
-
-```{r}
-median_list <- aggregate(bankn$deposit, by=list(bankn$job), FUN=median, na.rm= TRUE)
-print(median_list)
-```
-```{r}
-summary(bankn$deposit)
-```
-
- Replacing all NA values and zeros with median values based on job.
-```{r}
-bankn$deposit[(is.na(bankn$deposit) | bankn$deposit == 0.0) & bankn$job=='admin.'] = median_list[1,2]
-bankn$deposit[(is.na(bankn$deposit) | bankn$deposit == 0.0) & bankn$job=='blue-collar'] = median_list[2,2]
-bankn$deposit[(is.na(bankn$deposit) | bankn$deposit == 0.0) & bankn$job=='entrepreneur'] = median_list[3,2]
-bankn$deposit[(is.na(bankn$deposit) | bankn$deposit == 0.0) & bankn$job=='housemaid'] = median_list[4,2]
-bankn$deposit[(is.na(bankn$deposit) | bankn$deposit == 0.0) & bankn$job=='management'] = median_list[5,2]
-bankn$deposit[(is.na(bankn$deposit) | bankn$deposit == 0.0) & bankn$job=='retired'] = median_list[6,2]
-bankn$deposit[(is.na(bankn$deposit) | bankn$deposit == 0.0) & bankn$job=='self-employed'] = median_list[7,2]
-bankn$deposit[(is.na(bankn$deposit) | bankn$deposit == 0.0) & bankn$job=='services'] = median_list[8,2]
-bankn$deposit[(is.na(bankn$deposit) | bankn$deposit == 0.0) & bankn$job=='student'] = median_list[9,2]
-bankn$deposit[(is.na(bankn$deposit) | bankn$deposit == 0.0) & bankn$job=='technician'] = median_list[10,2]
-bankn$deposit[(is.na(bankn$deposit) | bankn$deposit == 0.0) & bankn$job=='unemployed'] = median_list[11,2]
-```
+## Summary of Data | Deposit
 
 ```{r}
 summary(bankn$deposit)
 ```
-```{r}
-summary(bankn)
-```
+----
 
-
-```{r}
-hist(bankn$deposit)
-```
-
-###Fixing outliers within Deposit 
-```{r}
-d_min <- min(bankn$deposit)
-d_max <- max(bankn$deposit)
-summary(bankn$deposit)
-d_norm <- ((bankn[,"deposit"]- d_min) / (d_max - d_min))*((100-1) +1)
-bankn$deposit <- round(d_norm, digits = 0)
-summary(bankn$deposit)
+```{r, fig.align='center', fig.cap='Histogram of Deposits'}
+hist(bankn$deposit, prob = TRUE, main = "Density of Bank Deposits",ylim=c(0,.0001), xlim=c(0,80000))
+lines(density(bankn$deposit), lwd = 1, col = "blue")
 ```
 
 ## Summary of Data | Balance
@@ -480,20 +465,25 @@ summary(bankn$balance, maxsum = 10)
 - The balance field contains 4 rows with characters instead of numeric 
   at row 8, 54, 26 and 87. Which causes the field to be interpreted as a factor field.
 
-## Values  
+## Summary of Data | Balance
+
+####  Values  
 ```{r echo=TRUE}
 bankn$balance[c(8, 54, 26, 87)]
 ```
-## Removing noise 
+
+## Summary of Data | Balance
+
+#### Removing noise 
 
 In order to convert the balance feature to a numeric type instead of a factor type we make use of the as.numeric and as.character functions
 ```{r}
-
 bankn$balance <- as.numeric(as.character(bankn$balance))
-
-
 ```
-## Replace Na 
+
+## Summary of Data | Balance
+
+#### Replacing Errors
 
 ```{r}
 balance_na_jobs <- unique(bankn[is.na(bankn$balance),3])
@@ -507,12 +497,12 @@ bankn_missing_balance <- bankn[is.na(bankn$balance),]
 for(i in 1:nrow(bankn_missing_balance)){
   bankn_missing_balance[i,'balance'] <- median_list[median_list$Group.1 == (bankn_missing_balance[i,'job']),'x']
 }
-
 bankn[is.na(bankn$balance),] = bankn_missing_balance
 ```
 
+## Summary of Data | Balance
 
-## Fixing outliers
+#### Fixing outliers
 
 ```{r}
 sd_balance <- sd(bankn$balance)
@@ -523,9 +513,13 @@ lower_limit <- mean_balance - (2*sd_balance)
 bankn$balance[bankn$balance > upper_limit] <- upper_limit
 bankn$balance[bankn$balance < lower_limit] <- lower_limit
 ```
+----
 
-```{r}
+```{r, fig.align='center', fig.cap='Boxplot of Balance'}
 boxplot(bankn$balance)
+```
+----
+```{r, fig.align='center', fig.cap='Density Plot of Balance'}
 hist(bankn$balance, prob = TRUE, main = "Density of Bank Balance",ylim=c(0,.000012), xlim =c(-200000,1200000))
 lines(density(bankn$balance), lwd = 1, col = "blue")
 ```
@@ -607,12 +601,26 @@ head(bankn$age, n = 5)
 ```{r}
 d_min <- min(bankn$deposit)
 d_max <- max(bankn$deposit)
-
-d_norm <- ((bankn[,"deposit"]- d_min) / (d_max - d_min))*((40-1) +1)
-bankn$deposit <- round(d_norm, digits = 0)
-
+summary(bankn$deposit)
 ```
 
+----
+```{r, fig.align='center', fig.cap='Density Plot of Deposits Before Norm'}
+hist(bankn$deposit, prob = TRUE, main = "Density of Bank Deposits",ylim=c(0,.0001), xlim=c(0,80000))
+lines(density(bankn$deposit), lwd = 1, col = "blue")
+```
+
+```{r}
+d_norm <- ((bankn[,"deposit"]- d_min) / (d_max - d_min))*((40-1) +1)
+bankn$deposit <- round(d_norm, digits = 3)
+summary(bankn$deposit)
+```
+
+----
+```{r, fig.align='center', fig.cap='Density Plot of Deposits After Norm'}
+hist(bankn$deposit, prob = TRUE, main = "Density of Bank Deposits",ylim=c(0,.2), xlim=c(0,45))
+lines(density(bankn$deposit), lwd = 1, col = "blue")
+```
 
 # Question 5
 
